@@ -23,7 +23,7 @@ addOperation x
 add :: Integer -> Integer -> Integer
 add x y = x + y
 
-sub :: Integer -> Integer ->
+sub :: Integer -> Integer -> Integer
 sub x y = x - y
 
 expression (x:[]) = term x
