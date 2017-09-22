@@ -2,29 +2,62 @@
 module Add (add) where
 
 import Data.Char
+import Data.String
 
-data Expression =
-  Num Int
-  | Add Expression Expression
-  | Sub Expression Expression
-  deriving (Show)
+data Tree a = Empty | Node a (Tree a) (Tree a) deriving(Eq,Ord,Show)
 
-expected x = error $ x ++ " expected"
+newtype PIdent =
+  PIdent ((Int,Int),String)
+  deriving(Eq,Ord,Show)
 
-term x
-  | isDigit x = Num x
-  | otherwise = expected "Digit"
+data Decl =
+  Dec Type PIdent
+  deriving(Eq,Ord,Show)
 
-addOperation x
-  | x == '+' = Add
-  | x == '-' = Sub
-  | otherwise = expected "AddOp"
+data Block =
+    BlockC Com
+  | BlockB [Com]
+  deriving(Eq,Ord,Show)
 
-add :: Integer -> Integer -> Integer
-add x y = x + y
+data Com =
+    Dec Decl
+  | While Exp Block
+  | If Exp Block
+  | IfElse Exp Block Block
+  | Return Exp
+  deriving(Eq,Ord,Show)
 
-sub :: Integer -> Integer -> Integer
-sub x y = x - y
+data Exp =
+   Atr PIdent Exp
+ | Or Exp Exp
+ | And Exp Exp
+ | Eq Exp Exp
+ | Neq Exp Exp
+ | Lt Exp Exp
+ | Gt Exp Exp
+ | Add Exp Exp
+ | Sub Exp Exp
+ | Mul Exp Exp
+ | Div Exp Exp
+ | Neg Exp
+ | NegInt Exp
+ | Int Integer
+ | Bool BoolT
+  deriving (Eq,Ord,Show)
 
-expression (x:[]) = term x
-expression (x:y:zs) = (addOperation y) (expression [x]) (expression zs)
+data BoolT =
+    ETrue
+  | EFalse
+  deriving(Eq,Ord,Show)
+
+data Type =
+    TInt
+  | TBool
+  deriving(Eq,Ord,Show)
+
+evalExp :: Expr -> Int
+evalExp exp = case exp of
+  Add x y -> eval x + eval y
+  Sub x y -> eval x - eval y
+  Mul x y -> eval x * eval y
+  Div x y -> eval x / eval y
