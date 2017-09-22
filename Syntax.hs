@@ -23,7 +23,8 @@ data Com =
   deriving(Eq,Ord,Show)
 
 data Exp =
-   Atr PIdent Exp
+   Num Int
+ | Atr PIdent Exp
  | Or Exp Exp
  | And Exp Exp
  | Eq Exp Exp
