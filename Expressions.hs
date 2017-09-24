@@ -39,7 +39,7 @@ evalMul (a,b,c) = (show(mulOp x y):na,b,tail c)
 -- TODO eval infix expressions
 evalExp :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String])
 evalExp (a,b,c)
-    | c == [] = (a,b,c)
+    | null c = (a,b,c)
     -- TODO use any letter as variable!
     | x == "v" = evalExp (evalVar (a,b,c))
     | x == "+" = evalExp (evalPlus (a,b,c))
