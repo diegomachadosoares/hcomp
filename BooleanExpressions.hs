@@ -10,7 +10,7 @@ evalOr :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String
 evalOr (a,b,c) = if (a !! 0 == "ff" && a !! 1 == "ff") then ("ff":drop 2 a,b,tail c) else ("tt":drop 2 a,b,tail c)
 
 evalTil :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String])
-evalTil (a,b,c) = if (head a == "tt") then ("ff":drop 2 a,b,tail c) else ("tt":drop 2 a,b,tail c)
+evaltil (a,b,c) = if (head a == "tt") then ("ff":a,b,c) else ("tt":a,b,tail c)
 
 evalBoolean :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String])
 evalBoolean (a,b,c)
