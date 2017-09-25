@@ -6,7 +6,7 @@ evalNil :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String
 evalNil (a,b,c) = (a,b,tail c)
 
 evalAttr :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalAttr (a,b,c) = (drop 2 a,Map.insert (a !! 0) (a !! 1) b,tail c)
+evalAttr (a,b,c) = (drop 2 a,Map.insert (a !! 1) (a !! 0) b,tail c)
 
 evalIF :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalIF (a,b,c)
@@ -19,7 +19,9 @@ evalCMD (a,b,c)
     | null c = (a,b,c)
     | x == "nil" = evalCMD (evalNil (a,b,c))
     | x == ":=" = evalCMD (evalAttr (a,b,c))
+    -- TODO - Add Sequence evaluation
     -- | x == ";" = evalCMD (tail a,b,head a:tail c)
     | x == "if" = evalCMD (evalIF (a,b,tail c))
+    -- TODO - Add While evaluation
     | otherwise = evalCMD (head c:a,b,tail c)
     where x = head c
