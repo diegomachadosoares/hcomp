@@ -10,9 +10,8 @@ evalAttr (a,b,c) = (drop 2 a,Map.insert (a !! 0) (a !! 1) b,tail c)
 
 evalIF :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalIF (a,b,c)
-    | x == "if" = evalIF (a,b,tail c)
-    | x == "then" = evalIF (head c:a,b,tail c)
-    | x == "else" = evalIF (head c:a,b,tail c)
+    | x == "tt" = (a,b,tail (takeWhile (/="else") (tail c)))
+    | x == "ff" = (a,b,tail (dropWhile (/="else") c))
     where x = head c
 
 evalCMD :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
@@ -21,6 +20,6 @@ evalCMD (a,b,c)
     | x == "nil" = evalCMD (evalNil (a,b,c))
     | x == ":=" = evalCMD (evalAttr (a,b,c))
     -- | x == ";" = evalCMD (tail a,b,head a:tail c)
-    | x == "if" = evalCMD (evalIF (a,b,c))
+    | x == "if" = evalCMD (evalIF (a,b,tail c))
     | otherwise = evalCMD (head c:a,b,tail c)
     where x = head c
