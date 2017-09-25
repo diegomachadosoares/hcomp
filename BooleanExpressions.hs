@@ -6,7 +6,7 @@ evalT :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String S
 evalT (a,b,c) = (head c:a,b,tail c)
 
 evalEq :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
-evalEq (a,b,c) = if a !! 0 == a !! 1 then ("tt":a,b,tail c) else ("ff":a,b,tail c)
+evalEq (a,b,c) = if a !! 0 == a !! 1 then (["tt"],b,tail c) else (["ff"],b,tail c)
 
 evalOr :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
 evalOr (a,b,c) = if (a !! 0 == "ff" && a !! 1 == "ff") then ("ff":drop 2 a,b,tail c) else ("tt":drop 2 a,b,tail c)
