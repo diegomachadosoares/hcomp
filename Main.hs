@@ -2,20 +2,50 @@ module Main where
 
 import qualified Data.Map as Map
 import Expressions
+import BooleanExpressions
 
-m = Map.insert "v" "1" Map.empty
+m = Map.empty
+m1 = Map.insert "v" "1" Map.empty
 
-varExpr = ([],m,["v"])
+-- Expressions
+varExpr = ([],m1,["v"])
 sumExpr = ([],m,["1","2","+"]) -- 3
 subExpr = ([],m,["1","2","-"]) -- 1
 mulExpr = ([],m,["1","2","*"]) -- 2
 compExpr = ([],m,["1","2","+","6","3","-","*"]) -- 9
 compExpr2 = ([],m,["1","2","+","6","3","-","*","1","+"]) -- 10
 
+-- BooleanExpressions
+trueExpr = ([],m,["tt"])
+falseExpr = ([],m,["ff"])
+eqExpr = ([],m,["1","1","="])
+eqExpr1 = ([],m,["1","2","="])
+orExpr = ([],m,["tt","tt","or"])
+orExpr0 = ([],m,["tt","ff","or"])
+orExpr1 = ([],m,["ff","ff","or"])
+negExpr = ([],m,["tt","~"])
+negExpr1 = ([],m,["ff","~"])
+
+-- Commands
+
+
 main = do
+    -- Expressions Tests
+    print("Expressions")
     print (evalExp varExpr)
     print (evalExp sumExpr)
     print (evalExp subExpr)
     print (evalExp mulExpr)
     print (evalExp compExpr)
     print (evalExp compExpr2)
+    -- Boolean Expressions Test
+    print ("Boolean Expressions")
+    print (evalBoolean trueExpr)
+    print (evalBoolean falseExpr)
+    print (evalBoolean eqExpr)
+    print (evalBoolean eqExpr1)
+    print (evalBoolean orExpr)
+    print (evalBoolean orExpr0)
+    print (evalBoolean orExpr1)
+    print (evalBoolean negExpr)
+    print (evalBoolean negExpr1)
