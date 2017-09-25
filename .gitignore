@@ -5,3 +5,7 @@
 # Vim
 *~
 .swp
+
+# Haskell
+*.hi
+*.o
