@@ -1,18 +1,20 @@
 module BooleanExpressions where
 
-evalT :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String])
+import qualified Data.Map as Map
+
+evalT :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
 evalT (a,b,c) = (head c:a,b,tail c)
 
-evalEq :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String])
+evalEq :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
 evalEq (a,b,c) = if a !! 0 == a !! 1 then ("tt":a,b,tail c) else ("ff":a,b,tail c)
 
-evalOr :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String])
+evalOr :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
 evalOr (a,b,c) = if (a !! 0 == "ff" && a !! 1 == "ff") then ("ff":drop 2 a,b,tail c) else ("tt":drop 2 a,b,tail c)
 
-evalTil :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String])
-evaltil (a,b,c) = if (head a == "tt") then ("ff":a,b,c) else ("tt":a,b,tail c)
+evalTil :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
+evalTil (a,b,c) = if (head a == "tt") then ("ff":a,b,c) else ("tt":a,b,tail c)
 
-evalBoolean :: ([String],[(String,Int)],[String]) -> ([String],[(String,Int)],[String])
+evalBoolean :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
 evalBoolean (a,b,c)
     | null c = (a,b,c)
     | x == "tt" = evalBoolean (evalT (a,b,c))
