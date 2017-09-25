@@ -16,20 +16,20 @@ evalVar (a,b,c) = ((Map.findWithDefault (head c) "v" b):a, b, tail c)
 
 evalPlus :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalPlus (a,b,c) = (show(addOp x y):na,b,tail c)
-    where   x = read (a !! 0) :: Int
-            y = read (a !! 1) :: Int
+    where   x = read (a !! 1) :: Int
+            y = read (a !! 0) :: Int
             na = drop 2 a
 
 evalMinus :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalMinus (a,b,c) = (show(subOp x y):na,b,tail c)
-    where   x = read (a !! 0) :: Int
-            y = read (a !! 1) :: Int
+    where   x = read (a !! 1) :: Int
+            y = read (a !! 0) :: Int
             na = drop 2 a
 
 evalMul :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalMul (a,b,c) = (show(mulOp x y):na,b,tail c)
-    where   x = read (a !! 0) :: Int
-            y = read (a !! 1) :: Int
+    where   x = read (a !! 1) :: Int
+            y = read (a !! 0) :: Int
             na = drop 2 a
 
 -- TODO eval infix expressions
