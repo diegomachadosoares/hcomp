@@ -3,6 +3,7 @@ module Main where
 import qualified Data.Map as Map
 import Expressions
 import BooleanExpressions
+import Commands
 
 m = Map.empty
 m1 = Map.insert "v" "1" Map.empty
@@ -27,6 +28,10 @@ negExpr = ([],m,["tt","~"])
 negExpr1 = ([],m,["ff","~"])
 
 -- Commands
+nilCmd = ([],m,["nil"])
+attrCmd = ([],m,["v","2",":=", "a","1",":=","a","2",":="])
+ifCmd = ([],m,["if","tt","then","c","1",":=","else","c","2",":="])
+ifCmd1 = ([],m,["if","ff","then","c","1",":=","else","c","2",":="])
 
 
 main = do
@@ -49,3 +54,9 @@ main = do
     print (evalBoolean orExpr1)
     print (evalBoolean negExpr)
     print (evalBoolean negExpr1)
+    -- Commands
+    print ("Commands")
+    print (evalCMD nilCmd)
+    print (evalCMD attrCmd)
+    print (evalCMD ifCmd)
+    print (evalCMD ifCmd1)
