@@ -13,6 +13,7 @@ evalAttr (s,m,c) = (tail s,Map.insert (head c) (head s) m,tail c)
 
 first (s,_,_) = s
 
+-- TODO Fix error when there is another code block after the 'else' block
 evalIF :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalIF (s,m,c)
     | x == "tt" = (s,m,(takeWhile (/="else") (tail (dropWhile (/="then") c) ) ))
