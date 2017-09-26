@@ -3,7 +3,7 @@ module Main where
 import qualified Data.Map as Map
 import Expressions
 import BooleanExpressions
---import Commands
+import Commands
 
 m0 = Map.empty
 m1 = Map.insert "a" "1" Map.empty
@@ -37,11 +37,12 @@ negExpr1 = ([],m,["ff","~"])
 
 -- Commands
 nilCmd = ([],m,["nil"])
-attrCmd = ([],m,["v","2",":=", "a","1",":=","a","2",":="])
-ifCmd = ([],m,["if","tt","then","c","1",":=","else","c","2",":="])
-ifCmd1 = ([],m,["if","ff","then","c","1",":=","else","c","2",":="])
+attrCmd = ([],m,["2",":=","a","6",":=","b"])
+ifCmd = ([],m,["if","a","1","=","then","c","1",":=","else","c","2",":="])
+ifCmd1 = ([],m,["if","e","6","=","then","c","1",":=","else","c","8",":="])
+whileCmd = ([],m,["while","b","0","=","~","do","b","1","-",":=","b","fimDo"])
 
-fact = ([],m,["y","1",":=","while","x","0","=","~","y","y","x","*",":="])
+fact = ([],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])
 
 
 main = do
@@ -69,11 +70,12 @@ main = do
     print (evalBoolean orExpr1)
     print (evalBoolean negExpr)
     print (evalBoolean negExpr1)
-    -}
     -- Commands
     print ("Commands")
     print (evalCMD nilCmd)
     print (evalCMD attrCmd)
     print (evalCMD ifCmd)
     print (evalCMD ifCmd1)
+    print (evalCMD whileCmd)
+    -}
     print (evalCMD fact)
