@@ -3,33 +3,33 @@ module Commands where
 import qualified Data.Map as Map
 
 evalNil :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalNil (a,b,c) = (a,b,tail c)
+evalNil (s,m,c) = (s,m,tail c)
 
 evalAttr :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalAttr (a,b,c) = (drop 2 a,Map.insert (a !! 1) (a !! 0) b,tail c)
+evalAttr (s,m,c) = (drop 2 s,Map.insert (s !! 1) (s !! 0) m,tail c)
 
 evalIF :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalIF (a,b,c)
-    | x == "tt" = (a,b,tail (takeWhile (/="else") (tail c)))
-    | x == "ff" = (a,b,tail (dropWhile (/="else") c))
+evalIF (s,m,c)
+    | x == "tt" = (s,m,tail (takeWhile (/="else") (tail c)))
+    | x == "ff" = (s,m,tail (dropWhile (/="else") c))
     where x = head c
 
-whileHelper (a,_,_) = a
+whileHelper (s,_,_) = a
 
 
 evalWhile :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalWhile (a,b,c)
-    | x == "while" = evalCMD((c!!1):(c!!3):a,b,(c!!1):"while":c)
-    | x == "ff" = (a,b,c)
+evalWhile (s,m,c)
+    | x == "while" = evalCMD((c!!1):(c!!3):s,m,(c!!1):"while":c)
+    | x == "ff" = (s,m,c)
     where x = head c
 
 
 evalCMD :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalCMD (a,b,c)
-    | null c = (a,b,c)
-    | x == "nil" = evalCMD (evalNil (a,b,c))
-    | x == ":=" = evalCMD (evalAttr (a,b,c))
-    | x == "if" = evalCMD (evalIF (a,b,tail c))
-    | x == "while" = evalCMD (evalWhile (a,b,c))
-    | otherwise = evalCMD (head c:a,b,tail c)
+evalCMD (s,m,c)
+    | null c = (s,m,c)
+    | x == "nil" = evalCMD (evalNil (s,m,c))
+    | x == ":=" = evalCMD (evalAttr (s,m,c))
+    | x == "if" = evalCMD (evalIF (s,m,tail c))
+    | x == "while" = evalCMD (evalWhile (s,m,c))
+    | otherwise = evalCMD (head c:s,m,tail c)
     where x = head c
