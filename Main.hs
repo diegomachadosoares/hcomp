@@ -38,15 +38,14 @@ negExpr1 = ([],m,["ff","~"])
 -- Commands
 nilCmd = ([],m,["nil"])
 attrCmd = ([],m,["2",":=","a","6",":=","b"])
-ifCmd = ([],m,["if","a","1","=","then","c","1",":=","else","c","2",":="])
-ifCmd1 = ([],m,["if","e","6","=","then","c","1",":=","else","c","8",":="])
+ifCmd = ([],m,["if","a","1","=","then","10",":=","c","else","2",":=","c"])
+ifCmd1 = ([],m,["if","e","6","=","then","1",":=","c","else","8",":=","c"])
 whileCmd = ([],m,["while","b","0","=","~","do","b","1","-",":=","b","fimDo"])
 
 fact = ([],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])
 
 
 main = do
-    {-
     -- Expressions Tests
     print("Expressions")
     print (evalExp varExpr)
@@ -77,5 +76,6 @@ main = do
     print (evalCMD ifCmd)
     print (evalCMD ifCmd1)
     print (evalCMD whileCmd)
-    -}
+    -- Factorial
+    print ("Factorial")
     print (evalCMD fact)

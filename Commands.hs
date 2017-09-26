@@ -15,7 +15,7 @@ first (s,_,_) = s
 
 evalIF :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalIF (s,m,c)
-    | x == "tt" = (s,m,tail (takeWhile (/="else") (tail c)))
+    | x == "tt" = (s,m,(takeWhile (/="else") (tail (dropWhile (/="then") c) ) ))
     | x == "ff" = (s,m,tail (dropWhile (/="else") c))
     where x = head (first (evalBoolean(s,m,takeWhile (/="then") c)))
 
