@@ -1,12 +1,20 @@
 module BooleanExpressions where
 
 import qualified Data.Map as Map
+import Expressions
 
 evalT :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
 evalT (a,b,c) = (head c:a,b,tail c)
 
+evalEqHelper (a,_,_) = a
+
 evalEq :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
-evalEq (a,b,c) = if a !! 0 == a !! 1 then ("tt":drop 2 a,b,tail c) else ("ff":drop 2 a,b,tail c)
+--evalEq (a,b,c) = if a !! 0 == a !! 1 then ("tt":drop 2 a,b,tail c) else ("ff":drop 2 a,b,tail c)
+evalEq (a,b,c)
+    | x == y = ("tt":drop 2 a,b,tail c)
+    | otherwise = ("ff":drop 2 a,b,tail c)
+    where x = head evalEqHelper( evalVar(a,b,a!!0:c) )
+          y = head evalEqHelper( evalVar(a,b,a!!1:c) )
 
 evalOr :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
 evalOr (a,b,c) = if (a !! 0 == "ff" && a !! 1 == "ff") then ("ff":drop 2 a,b,tail c) else ("tt":drop 2 a,b,tail c)

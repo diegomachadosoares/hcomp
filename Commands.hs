@@ -14,14 +14,22 @@ evalIF (a,b,c)
     | x == "ff" = (a,b,tail (dropWhile (/="else") c))
     where x = head c
 
+whileHelper (a,_,_) = a
+
+
+evalWhile :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
+evalWhile (a,b,c)
+    | x == "while" = evalCMD((c!!1):(c!!3):a,b,(c!!1):"while":c)
+    | x == "ff" = (a,b,c)
+    where x = head c
+
+
 evalCMD :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalCMD (a,b,c)
     | null c = (a,b,c)
     | x == "nil" = evalCMD (evalNil (a,b,c))
     | x == ":=" = evalCMD (evalAttr (a,b,c))
-    -- TODO - Add Sequence evaluation
-    -- | x == ";" = evalCMD (tail a,b,head a:tail c)
     | x == "if" = evalCMD (evalIF (a,b,tail c))
-    -- TODO - Add While evaluation
+    | x == "while" = evalCMD (evalWhile (a,b,c))
     | otherwise = evalCMD (head c:a,b,tail c)
     where x = head c

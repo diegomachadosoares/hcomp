@@ -11,8 +11,10 @@ subOp x y = x - y
 mulOp :: Int -> Int -> Int
 mulOp x y = x * y
 
+vars = ["a","b","c","x","y","z"]
+
 evalVar :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalVar (a,b,c) = ((Map.findWithDefault (head c) "v" b):a, b, tail c)
+evalVar (a,b,c) = ((Map.findWithDefault "1" (head c) b):a, b, tail c)
 
 evalPlus :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalPlus (a,b,c) = (show(addOp x y):na,b,tail c)
@@ -37,7 +39,7 @@ evalExp :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String
 evalExp (a,b,c)
     | null c = (a,b,c)
     -- TODO use any letter as variable!
-    | x == "v" = evalExp (evalVar (a,b,c))
+    | x `elem` vars = evalExp (evalVar (a,b,c))
     | x == "+" = evalExp (evalPlus (a,b,c))
     | x == "-" = evalExp (evalMinus (a,b,c))
     | x == "*" = evalExp (evalMul (a,b,c))

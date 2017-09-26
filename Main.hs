@@ -6,10 +6,11 @@ import BooleanExpressions
 import Commands
 
 m = Map.empty
-m1 = Map.insert "v" "1" Map.empty
+m1 = Map.insert "x" "1" Map.empty
+m2 = Map.insert "y" "2" m1
 
 -- Expressions
-varExpr = ([],m1,["v"])
+varExpr = ([],m2,["x","y"])
 sumExpr = ([],m,["1","2","+"]) -- 3
 subExpr = ([],m,["1","2","-"]) -- 1
 mulExpr = ([],m,["1","2","*"]) -- 2
@@ -19,7 +20,7 @@ compExpr2 = ([],m,["1","2","+","6","3","-","*","1","+"]) -- 10
 -- BooleanExpressions
 trueExpr = ([],m,["tt"])
 falseExpr = ([],m,["ff"])
-eqExpr = ([],m,["1","1","="])
+eqExpr = ([],m,["x","y","="])
 eqExpr1 = ([],m,["1","2","="])
 orExpr = ([],m,["tt","tt","or"])
 orExpr0 = ([],m,["tt","ff","or"])
@@ -33,8 +34,11 @@ attrCmd = ([],m,["v","2",":=", "a","1",":=","a","2",":="])
 ifCmd = ([],m,["if","tt","then","c","1",":=","else","c","2",":="])
 ifCmd1 = ([],m,["if","ff","then","c","1",":=","else","c","2",":="])
 
+fact = ([],m,["y","1",":=","while","x","0","=","~","y","y","x","*",":="])
+
 
 main = do
+    {-
     -- Expressions Tests
     print("Expressions")
     print (evalExp varExpr)
@@ -47,7 +51,9 @@ main = do
     print ("Boolean Expressions")
     print (evalBoolean trueExpr)
     print (evalBoolean falseExpr)
+    -}
     print (evalBoolean eqExpr)
+    {-
     print (evalBoolean eqExpr1)
     print (evalBoolean orExpr)
     print (evalBoolean orExpr0)
@@ -60,3 +66,5 @@ main = do
     print (evalCMD attrCmd)
     print (evalCMD ifCmd)
     print (evalCMD ifCmd1)
+    print (evalCMD fact)
+    -}
