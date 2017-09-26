@@ -1,6 +1,7 @@
 module Expressions where
 
 import qualified Data.Map as Map
+import Data.Char
 
 addOp :: Int -> Int -> Int
 addOp x y = x + y
@@ -11,10 +12,10 @@ subOp x y = x - y
 mulOp :: Int -> Int -> Int
 mulOp x y = x * y
 
-vars = ["a","b","c","x","y","z"]
+vars = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","x","y","z"]
 
 evalVar :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalVar (a,b,c) = ((Map.findWithDefault "1" (head c) b):a, b, tail c)
+evalVar (a,b,c) = ((Map.findWithDefault "0" (head c) b):a, b, tail c)
 
 evalPlus :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalPlus (a,b,c) = (show(addOp x y):na,b,tail c)
@@ -43,5 +44,5 @@ evalExp (a,b,c)
     | x == "+" = evalExp (evalPlus (a,b,c))
     | x == "-" = evalExp (evalMinus (a,b,c))
     | x == "*" = evalExp (evalMul (a,b,c))
-    | otherwise = evalExp (x:a,b,tail c)
+    | isDigit (head x) = evalExp (x:a,b,tail c)
     where x = head c
