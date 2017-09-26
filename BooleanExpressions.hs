@@ -1,6 +1,7 @@
 module BooleanExpressions where
 
 import qualified Data.Map as Map
+import Data.Char
 import Expressions
 
 evalT :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
@@ -26,5 +27,7 @@ evalBoolean (s,m,c)
     | x == "=" = evalBoolean (evalEq (s,m,c))
     | x == "or" = evalBoolean (evalOr (s,m,c))
     | x == "~" = evalBoolean (evalNot (s,m,c))
-    | otherwise = evalBoolean (evalExp (s,m,c))
+    | x `elem` vars = evalBoolean (evalExp (s,m,c))
+    | isDigit (head x) = evalBoolean (evalExp (s,m,c))
+    | otherwise = (s,m,c)
     where x = head c
