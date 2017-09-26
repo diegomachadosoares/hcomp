@@ -15,34 +15,34 @@ mulOp x y = x * y
 vars = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","x","y","z"]
 
 evalVar :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalVar (a,b,c) = ((Map.findWithDefault "0" (head c) b):a, b, tail c)
+evalVar (s,m,c) = ((Map.findWithDefault "0" (head c) m):s, m, tail c)
 
 evalPlus :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalPlus (a,b,c) = (show(addOp x y):na,b,tail c)
-    where   x = read (a !! 1) :: Int
-            y = read (a !! 0) :: Int
-            na = drop 2 a
+evalPlus (s,m,c) = (show(addOp x y):ns,m,tail c)
+    where   x = read (s !! 1) :: Int
+            y = read (s !! 0) :: Int
+            ns = drop 2 s
 
 evalMinus :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalMinus (a,b,c) = (show(subOp x y):na,b,tail c)
-    where   x = read (a !! 1) :: Int
-            y = read (a !! 0) :: Int
-            na = drop 2 a
+evalMinus (s,m,c) = (show(subOp x y):ns,m,tail c)
+    where   x = read (s !! 1) :: Int
+            y = read (s !! 0) :: Int
+            ns = drop 2 s
 
 evalMul :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalMul (a,b,c) = (show(mulOp x y):na,b,tail c)
-    where   x = read (a !! 1) :: Int
-            y = read (a !! 0) :: Int
-            na = drop 2 a
+evalMul (s,m,c) = (show(mulOp x y):ns,m,tail c)
+    where   x = read (s !! 1) :: Int
+            y = read (s !! 0) :: Int
+            ns = drop 2 s
 
 -- TODO eval infix expressions
 evalExp :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
-evalExp (a,b,c)
-    | null c = (a,b,c)
+evalExp (s,m,c)
+    | null c = (s,m,c)
     -- TODO use any letter as variable!
-    | x `elem` vars = evalExp (evalVar (a,b,c))
-    | x == "+" = evalExp (evalPlus (a,b,c))
-    | x == "-" = evalExp (evalMinus (a,b,c))
-    | x == "*" = evalExp (evalMul (a,b,c))
-    | isDigit (head x) = evalExp (x:a,b,tail c)
+    | x `elem` vars = evalExp (evalVar (s,m,c))
+    | x == "+" = evalExp (evalPlus (s,m,c))
+    | x == "-" = evalExp (evalMinus (s,m,c))
+    | x == "*" = evalExp (evalMul (s,m,c))
+    | isDigit (head x) = evalExp (x:s,m,tail c)
     where x = head c
