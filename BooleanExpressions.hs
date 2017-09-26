@@ -26,5 +26,5 @@ evalBoolean (s,m,c)
     | x == "=" = evalBoolean (evalEq (s,m,c))
     | x == "or" = evalBoolean (evalOr (s,m,c))
     | x == "~" = evalBoolean (evalNot (s,m,c))
-    | x `elem` vars = evalBoolean (evalExp (s,m,c))
+    | otherwise = evalBoolean (evalExp (s,m,c))
     where x = head c
