@@ -39,10 +39,10 @@ evalMul (s,m,c) = (show(mulOp x y):ns,m,tail c)
 evalExp :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String,[String])
 evalExp (s,m,c)
     | null c = (s,m,c)
-    -- TODO use any letter as variable!
     | x `elem` vars = evalExp (evalVar (s,m,c))
     | x == "+" = evalExp (evalPlus (s,m,c))
     | x == "-" = evalExp (evalMinus (s,m,c))
     | x == "*" = evalExp (evalMul (s,m,c))
     | isDigit (head x) = evalExp (x:s,m,tail c)
+    | otherwise = (s,m,c)
     where x = head c
