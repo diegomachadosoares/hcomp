@@ -4,6 +4,7 @@ import qualified Data.Map as Map
 import Expressions
 import BooleanExpressions
 import Commands
+import SMC
 
 m0 = Map.empty
 m1 = Map.insert "a" "1" Map.empty
@@ -79,3 +80,14 @@ main = do
     -- Factorial
     print ("Factorial")
     print (evalCMD fact)
+
+    -- Generic Eval --
+    print ("Generic eval")
+    print (eval varExpr)
+    print (eval sumExpr)
+    print (eval trueExpr)
+    print (eval eqExpr1)
+    print (eval negExpr)
+    print (eval attrCmd)
+    print (eval ifCmd)
+    print (eval whileCmd)
