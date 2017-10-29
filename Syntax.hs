@@ -1,6 +1,13 @@
 -- Syntax.hs
 module Syntax where
 
+import qualified Data.Map as Map
+
+type E = Map.Map Int String
+type S = [String]
+type M = Map.Map String String
+type C = [String]
+
 newtype PIdent =
   PIdent ((Int,Int),String)
   deriving(Eq,Ord,Show)

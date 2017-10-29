@@ -3,29 +3,29 @@ module Declaration where
 import qualified Data.Map as Map
 import Data.List
 import Expressions
-import BooleanExpression
+import BooleanExpressions
 
 -- TODO define kind x
 
-evalDec :: ([String], Map.Map String String, [String], x) -> ([String], Map.Map String String, [String], x)
-evalDec (s,m,c,e)
-   | x == "const" = evalConst (a,b,tail c,e)
-   | x == "var" = evalVar (a,b,tail c,e)
+evalDec :: (Map.Map Int String, [String], Map.Map String String, [String]) -> (Map.Map Int String, [String], Map.Map String String, [String])
+evalDec (e,s,m,c)
+   | x == "const" = evalConst (e,s,m,tail c)
+   | x == "var" = evalEVar (e,s,m,tail c)
    where x = head c
    
-evalConst :: ([String], Map.Map String String, [String], x) -> ([String], Map.Map String String, [String], x)
-evalConst (s,m,c,e)
-   | x == "int" = evalConst (evalExp(a,b,tail c,e))
-   | x == "boolean" = evalConst (evalBoolean(a,b,tail c,e))
-   | x == ":=" = eval (tail s,m,tail c,f)
+evalConst :: (Map.Map Int String, [String], Map.Map String String, [String]) -> (Map.Map Int String, [String], Map.Map String String, [String])
+evalConst (e,s,m,c)
+   | x == "int" = evalConst (evalExp(e,s,m,tail c))
+   | x == "boolean" = evalConst (evalBoolean(e,s,m,tail c))
+   | x == ":=" = eval (f,tail s,m,tail c)
    where x = head c
          f = Map.insert (head c) (head s) f
 
 -- TODO get position of c in m to z
-evalVar :: ([String], Map.Map String String, [String], x) -> ([String], Map.Map String String, [String], x)
-evalVar (s,m,c,e)
-   | x == "int" = evalConst (evalExp(a,b,tail c,e))
-   | x == "boolean" = evalConst (evalBoolean(a,b,tail c,e))
-   | x == ":=" = eval (tail s,Map.insert (head c) (head s) m,tail c,f)
+evalEVar :: (Map.Map Int String, [String], Map.Map String String, [String]) -> (Map.Map Int String, [String], Map.Map String String, [String])
+evalEVar (e,s,m,c)
+   | x == "int" = evalConst (evalExp(e,s,m,tail c))
+   | x == "boolean" = evalConst (evalBoolean(e,s,m,tail c))
+   | x == ":=" = eval (f,tail s,Map.insert (head c) (head s) m,tail c)
    where x = head c
          f = Map.insert (head c) (z) f
