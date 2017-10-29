@@ -15,10 +15,10 @@ evalAttr (e,s,m,c) = (e,tail s,Map.insert (head c) (head s) m,tail c)
 
 first (_,s,_,_) = s
 
--- TODO Fix error when there is another code block after the 'else' block
+-- TODO test Fixed error when there is another code block after the 'else' block
 evalIF :: (E, S, M, C) -> (E, S, M, C)
 evalIF (e,s,m,c)
-    | x == "tt" = (e,s,m,(takeWhile (/="else") (tail (dropWhile (/="then") c) ) ))
+    | x == "tt" = (e,s,m,concat [(takeWhile (/="else") (tail (dropWhile (/="then") c) ) ) (tail (dropWhile (/="fimThen") c))])
     | x == "ff" = (e,s,m,tail (dropWhile (/="else") c))
     where x = head (first (evalBoolean(e,s,m,takeWhile (/="then") c)))
 
