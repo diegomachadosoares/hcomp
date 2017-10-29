@@ -2,32 +2,34 @@ module BooleanExpressions where
 
 import qualified Data.Map as Map
 import Data.Char
+
+import Syntax
 import Expressions
 
-evalT :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
-evalT (s,m,c) = (head c:s,m,tail c)
+evalT :: (E, S, M, C) -> (E, S, M, C)
+evalT (e,s,m,c) = (e,head c:s,m,tail c)
 
-evalEq :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
-evalEq (s,m,c) = if s !! 0 == s !! 1 then ("tt":drop 2 s,m,tail c) else ("ff":drop 2 s,m,tail c)
+evalEq :: (E, S, M, C) -> (E, S, M, C)
+evalEq (e,s,m,c) = if s !! 0 == s !! 1 then (e,"tt":drop 2 s,m,tail c) else (e,"ff":drop 2 s,m,tail c)
 
-evalOr :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
-evalOr (s,m,c) = if (s !! 0 == "ff" && s !! 1 == "ff") then ("ff":drop 2 s,m,tail c) else ("tt":drop 2 s,m,tail c)
+evalOr :: (E, S, M, C) -> (E, S, M, C)
+evalOr (e,s,m,c) = if (s !! 0 == "ff" && s !! 1 == "ff") then (e,"ff":drop 2 s,m,tail c) else (e,"tt":drop 2 s,m,tail c)
 
 -- TODO - Fix negation of "tt"
-evalNot :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
-evalNot (s,m,c)
-    | head s == "tt" = ("ff":drop 1 s,m,tail c)
-    | head s == "ff" = ("tt":drop 1 s,m,tail c)
+evalNot :: (E, S, M, C) -> (E, S, M, C)
+evalNot (e,s,m,c)
+    | head s == "tt" = (e,"ff":drop 1 s,m,tail c)
+    | head s == "ff" = (e,"tt":drop 1 s,m,tail c)
 
-evalBoolean :: ([String],Map.Map String String,[String]) -> ([String],Map.Map String String, [String])
-evalBoolean (s,m,c)
-    | null c = (s,m,c)
-    | x == "tt" = evalBoolean (evalT (s,m,c))
-    | x == "ff" = evalBoolean (evalT (s,m,c))
-    | x == "=" = evalBoolean (evalEq (s,m,c))
-    | x == "or" = evalBoolean (evalOr (s,m,c))
-    | x == "~" = evalBoolean (evalNot (s,m,c))
-    | x `elem` vars = evalBoolean (evalExp (s,m,c))
-    | isDigit (head x) = evalBoolean (evalExp (s,m,c))
-    | otherwise = (s,m,c)
+evalBoolean :: (E, S, M, C) -> (E, S, M, C)
+evalBoolean (e,s,m,c)
+    | null c = (e,s,m,c)
+    | x == "tt" = evalBoolean (evalT (e,s,m,c))
+    | x == "ff" = evalBoolean (evalT (e,s,m,c))
+    | x == "=" = evalBoolean (evalEq (e,s,m,c))
+    | x == "or" = evalBoolean (evalOr (e,s,m,c))
+    | x == "~" = evalBoolean (evalNot (e,s,m,c))
+    | x `elem` vars = evalBoolean (evalExp (e,s,m,c))
+    | isDigit (head x) = evalBoolean (evalExp (e,s,m,c))
+    | otherwise = (e,s,m,c)
     where x = head c

@@ -4,7 +4,7 @@ import qualified Data.Map as Map
 import Expressions
 import BooleanExpressions
 import Commands
-import SMC
+import ESMC
 
 m0 = Map.empty
 m1 = Map.insert "a" "1" Map.empty
@@ -13,37 +13,39 @@ m3 = Map.insert "c" "2" m2
 m4 = Map.insert "d" "3" m3
 m = Map.insert "e" "2" m4
 
+env = Map.empty
+
 -- Expressions
-varExpr = ([],m,["a","b"])
-sumExpr = ([],m,["1","2","+"]) -- 3
-sumExpr1 = ([],m,["a","b","+"]) -- 3
-subExpr = ([],m,["1","2","-"]) -- 1
-subExpr1 = ([],m,["c","d","-"]) -- 1
-mulExpr = ([],m,["1","2","*"]) -- 2
-compExpr = ([],m,["1","2","+","6","3","-","*"]) -- 9
-compExpr2 = ([],m,["1","2","+","6","3","-","*","1","+"]) -- 10
+varExpr = (env,[],m,["a","b"])
+sumExpr = (env,[],m,["1","2","+"]) -- 3
+sumExpr1 = (env,[],m,["a","b","+"]) -- 3
+subExpr = (env,[],m,["1","2","-"]) -- 1
+subExpr1 = (env,[],m,["c","d","-"]) -- 1
+mulExpr = (env,[],m,["1","2","*"]) -- 2
+compExpr = (env,[],m,["1","2","+","6","3","-","*"]) -- 9
+compExpr2 = (env,[],m,["1","2","+","6","3","-","*","1","+"]) -- 10
 
 -- BooleanExpressions
-trueExpr = ([],m,["tt"])
-falseExpr = ([],m,["ff"])
-eqExpr = ([],m,["a","b","="])
-eqExpr1 = ([],m,["c","b","="])
-eqExpr2 = ([],m,["a","1","="])
-eqExpr3 = ([],m,["1","2","="])
-orExpr = ([],m,["tt","tt","or"])
-orExpr0 = ([],m,["tt","ff","or"])
-orExpr1 = ([],m,["ff","ff","or"])
-negExpr = ([],m,["tt","~"])
-negExpr1 = ([],m,["ff","~"])
+trueExpr = (env,[],m,["tt"])
+falseExpr = (env,[],m,["ff"])
+eqExpr = (env,[],m,["a","b","="])
+eqExpr1 = (env,[],m,["c","b","="])
+eqExpr2 = (env,[],m,["a","1","="])
+eqExpr3 = (env,[],m,["1","2","="])
+orExpr = (env,[],m,["tt","tt","or"])
+orExpr0 = (env,[],m,["tt","ff","or"])
+orExpr1 = (env,[],m,["ff","ff","or"])
+negExpr = (env,[],m,["tt","~"])
+negExpr1 = (env,[],m,["ff","~"])
 
 -- Commands
-nilCmd = ([],m,["nil"])
-attrCmd = ([],m,["2",":=","a","6",":=","b"])
-ifCmd = ([],m,["if","a","1","=","then","10",":=","c","else","2",":=","c"])
-ifCmd1 = ([],m,["if","e","6","=","then","1",":=","c","else","8",":=","c"])
-whileCmd = ([],m,["while","b","0","=","~","do","b","1","-",":=","b","fimDo"])
+nilCmd = (env,[],m,["nil"])
+attrCmd = (env,[],m,["2",":=","a","6",":=","b"])
+ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c"])
+ifCmd1 = (env,[],m,["if","e","6","=","then","1",":=","c","else","8",":=","c"])
+whileCmd = (env,[],m,["while","b","0","=","~","do","b","1","-",":=","b","fimDo"])
 
-fact = ([],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])
+fact = (env,[],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])
 
 
 main = do

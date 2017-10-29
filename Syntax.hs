@@ -3,10 +3,10 @@ module Syntax where
 
 import qualified Data.Map as Map
 
-type ValueStack = [String]
-type ControlStack = [String]
-type Memory = Map.Map String String
-type Env = Map.Map Int String
+type E = Map.Map Int String
+type S = [String]
+type M = Map.Map String String
+type C = [String]
 
 newtype PIdent =
   PIdent ((Int,Int),String)
