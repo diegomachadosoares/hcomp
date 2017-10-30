@@ -3,7 +3,7 @@ module Syntax where
 
 import qualified Data.Map as Map
 
-type E = Map.Map Int String
+type E = Map.Map String (String,String)
 type S = [String]
 type M = Map.Map String String
 type C = [String]

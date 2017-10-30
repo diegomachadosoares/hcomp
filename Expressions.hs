@@ -17,7 +17,10 @@ mulOp x y = x * y
 vars = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","x","y","z"]
 
 evalVar :: (E, S, M, C) -> (E, S, M, C)
-evalVar (e,s,m,c) = (e,(Map.findWithDefault "0" (head c) m):s, m, tail c)
+evalVar (e,s,m,c)
+    | x == "c" = (e,show (e Map.!? (head c)):s,m,tail c)
+    | x == "v" = (e, (snd (Map.elemAt (read (snd (Map.findWithDefault ("150","150") (head c) e))) m)):s, m, tail c)
+    where x = fst (Map.findWithDefault ("150","150") (head c) e)
 
 evalPlus :: (E, S, M, C) -> (E, S, M, C)
 evalPlus (e,s,m,c) = (e,show(addOp x y):ns,m,tail c)
