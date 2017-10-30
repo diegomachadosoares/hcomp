@@ -15,7 +15,6 @@ evalAttr (e,s,m,c) = (e,tail s,Map.insert (head c) (head s) m,tail c)
 
 first (_,s,_,_) = s
 
--- TODO test Fixed error when there is another code block after the 'else' block
 evalIF :: (E, S, M, C) -> (E, S, M, C)
 evalIF (e,s,m,c)
     | x == "tt" = (e,s,m,concat [(takeWhile (/="else") (tail (dropWhile (/="then") c) ) ), (tail (dropWhile (/="fimElse") c))])
