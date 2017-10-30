@@ -41,8 +41,8 @@ negExpr1 = (env,[],m,["ff","~"])
 -- Commands
 nilCmd = (env,[],m,["nil"])
 attrCmd = (env,[],m,["2",":=","a","6",":=","b"])
-ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c"])
-ifCmd1 = (env,[],m,["if","e","6","=","then","1",":=","c","else","8",":=","c"])
+ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c","fimElse","200",":=","e"])
+ifCmd1 = (env,[],m,["if","e","6","=","then","1",":=","c","else","8",":=","c","fimElse"])
 whileCmd = (env,[],m,["while","b","0","=","~","do","b","1","-",":=","b","fimDo"])
 
 fact = (env,[],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])

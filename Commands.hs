@@ -18,7 +18,7 @@ first (_,s,_,_) = s
 -- TODO test Fixed error when there is another code block after the 'else' block
 evalIF :: (E, S, M, C) -> (E, S, M, C)
 evalIF (e,s,m,c)
-    | x == "tt" = (e,s,m,concat [(takeWhile (/="else") (tail (dropWhile (/="then") c) ) ) (tail (dropWhile (/="fimThen") c))])
+    | x == "tt" = (e,s,m,concat [(takeWhile (/="else") (tail (dropWhile (/="then") c) ) ), (tail (dropWhile (/="fimElse") c))])
     | x == "ff" = (e,s,m,tail (dropWhile (/="else") c))
     where x = head (first (evalBoolean(e,s,m,takeWhile (/="then") c)))
 
@@ -35,5 +35,6 @@ evalCMD (e,s,m,c)
     | x == ":=" = evalCMD (evalAttr (e,s,m,tail c))
     | x == "if" = evalCMD (evalIF (e,s,m,tail c))
     | x == "while" = evalCMD (evalWhile (e,s,m,tail c))
+    | x == "fimElse" = (e,s,m,tail c)
     | otherwise = evalCMD (evalExp (e,s,m,c))
     where x = head c
