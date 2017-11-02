@@ -4,6 +4,7 @@ import qualified Data.Map as Map
 import Data.List
 
 import Syntax
+import HelperTools
 import Expressions
 
 evalNil :: (E, S, M, C) -> (E, S, M, C)
@@ -12,19 +13,17 @@ evalNil (e,s,m,c) = (e,s,m,tail c)
 evalAttr :: (E, S, M, C) -> (E, S, M, C)
 evalAttr (e,s,m,c) = (e,tail s,Map.insert (head c) (head s) m,tail c)
 
-first (_,s,_,_) = s
-
 evalIF :: (E, S, M, C) -> (E, S, M, C)
 evalIF (e,s,m,c)
     | x == "tt" = (e,s,m,concat [(takeWhile (/="else") (tail (dropWhile (/="then") c) ) ), (tail (dropWhile (/="fimElse") c))])
     | x == "ff" = (e,s,m,tail (dropWhile (/="else") c))
-    where x = head (first (evalExp(e,s,m,takeWhile (/="then") c)))
+    where x = head (filterS (evalExp(e,s,m,takeWhile (/="then") c)))
 
 evalWhile :: (E, S, M, C) -> (E, S, M, C)
 evalWhile (e,s,m,c)
     | x == "tt" = evalCMD(e,s,m,concat [tail ( (dropWhile (/="do") (takeWhile(/="fimDo") c) ) ),["while"],c])
     | x == "ff" = (e,s,m,tail (dropWhile (/="fimDo") c))
-    where x = head (first (evalExp(e,s,m,takeWhile (/="do") c)))
+    where x = head (filterS (evalExp(e,s,m,takeWhile (/="do") c)))
 
 evalCMD :: (E, S, M, C) -> (E, S, M, C)
 evalCMD (e,s,m,c)

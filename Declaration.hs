@@ -5,6 +5,7 @@ import Data.List
 import Data.Char
 
 import Syntax
+import HelperTools
 import Expressions
 import ESMC
 
@@ -32,9 +33,6 @@ evalEVar (e,s,m,c)
    where x = head c
          f = Map.insert (head c) ("v",show (Map.findIndex (head c) m)) e
 
-first :: (a, b, c, d) -> (b)
-first (_,s,_,_) = s
-
 evalDecExp :: (E, S, M, C) -> (E, S, M, C)
 evalDecExp (e,s,m,c)
     | null c = (e,s,m,c)
@@ -51,8 +49,8 @@ evalExpIF :: (E, S, M, C) -> (E, S, M, C)
 evalExpIF (e,s,m,c)
     | x == "tt" = (e,v,m,":=":(tail (dropWhile (/="fimElse") c)))
     | x == "ff" = evalDecExp(e,s,m,tail (dropWhile (/="else") c))
-    where x = head (first (evalExp(e,s,m,takeWhile (/="then") c)))
-          v = first (evalDecExp(e,s,m,takeWhile(/="else") c))
+    where x = head (filterS (evalExp(e,s,m,takeWhile (/="then") c)))
+          v = filterS (evalDecExp(e,s,m,takeWhile(/="else") c))
 
 evalDecBoolean :: (E, S, M, C) -> (E, S, M, C)
 evalDecBoolean (e,s,m,c)
@@ -72,5 +70,5 @@ evalBoolIF :: (E, S, M, C) -> (E, S, M, C)
 evalBoolIF (e,s,m,c)
     | x == "tt" = (e,v,m,":=":(tail (dropWhile (/="fimElse") c)))
     | x == "ff" = evalDecBoolean(e,s,m,tail (dropWhile (/="else") c))
-    where x = head (first (evalExp(e,s,m,takeWhile (/="then") c)))
-          v = first (evalDecBoolean(e,s,m,takeWhile(/="else") c))
+    where x = head (filterS (evalExp(e,s,m,takeWhile (/="then") c)))
+          v = filterS (evalDecBoolean(e,s,m,takeWhile(/="else") c))
