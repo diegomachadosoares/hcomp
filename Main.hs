@@ -2,7 +2,6 @@ module Main where
 
 import qualified Data.Map as Map
 import Expressions
-import BooleanExpressions
 import Commands
 import ESMC
 
@@ -61,17 +60,17 @@ main = do
     print (evalExp compExpr2)
     -- Boolean Expressions Test
     print ("Boolean Expressions")
-    print (evalBoolean trueExpr)
-    print (evalBoolean falseExpr)
-    print (evalBoolean eqExpr)
-    print (evalBoolean eqExpr1)
-    print (evalBoolean eqExpr2)
-    print (evalBoolean eqExpr3)
-    print (evalBoolean orExpr)
-    print (evalBoolean orExpr0)
-    print (evalBoolean orExpr1)
-    print (evalBoolean negExpr)
-    print (evalBoolean negExpr1)
+    print (evalExp trueExpr)
+    print (evalExp falseExpr)
+    print (evalExp eqExpr)
+    print (evalExp eqExpr1)
+    print (evalExp eqExpr2)
+    print (evalExp eqExpr3)
+    print (evalExp orExpr)
+    print (evalExp orExpr0)
+    print (evalExp orExpr1)
+    print (evalExp negExpr)
+    print (evalExp negExpr1)
     -- Commands
     print ("Commands")
     print (evalCMD nilCmd)

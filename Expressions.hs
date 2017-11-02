@@ -40,6 +40,21 @@ evalMul (e,s,m,c) = (e,show(mulOp x y):ns,m,tail c)
             y = read (s !! 0) :: Int
             ns = drop 2 s
 
+evalT :: (E, S, M, C) -> (E, S, M, C)
+evalT (e,s,m,c) = (e,head c:s,m,tail c)
+
+evalEq :: (E, S, M, C) -> (E, S, M, C)
+evalEq (e,s,m,c) = if s !! 0 == s !! 1 then (e,"tt":drop 2 s,m,tail c) else (e,"ff":drop 2 s,m,tail c)
+
+evalOr :: (E, S, M, C) -> (E, S, M, C)
+evalOr (e,s,m,c) = if (s !! 0 == "ff" && s !! 1 == "ff") then (e,"ff":drop 2 s,m,tail c) else (e,"tt":drop 2 s,m,tail c)
+
+-- TODO - Fix negation of "tt"
+evalNot :: (E, S, M, C) -> (E, S, M, C)
+evalNot (e,s,m,c)
+    | head s == "tt" = (e,"ff":drop 1 s,m,tail c)
+    | head s == "ff" = (e,"tt":drop 1 s,m,tail c)
+
 -- TODO eval infix expressions
 evalExp :: (E, S, M, C) -> (E, S, M, C)
 evalExp (e,s,m,c)
@@ -48,6 +63,11 @@ evalExp (e,s,m,c)
     | x == "+" = evalExp (evalPlus (e,s,m,c))
     | x == "-" = evalExp (evalMinus (e,s,m,c))
     | x == "*" = evalExp (evalMul (e,s,m,c))
+    | x == "tt" = evalExp (evalT (e,s,m,c))
+    | x == "ff" = evalExp (evalT (e,s,m,c))
+    | x == "=" = evalExp (evalEq (e,s,m,c))
+    | x == "or" = evalExp (evalOr (e,s,m,c))
+    | x == "~" = evalExp (evalNot (e,s,m,c))
     | isDigit (head x) = evalExp (e,x:s,m,tail c)
     | otherwise = (e,s,m,c)
     where x = head c
