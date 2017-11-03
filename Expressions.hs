@@ -1,6 +1,7 @@
 module Expressions where
 
 import qualified Data.Map as Map
+import qualified Data.Vector as V
 import Data.Char
 
 import Syntax
@@ -18,9 +19,12 @@ vars = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r",
 
 evalVar :: (E, S, M, C) -> (E, S, M, C)
 evalVar (e,s,m,c)
-    | x == "c" = (e,show (e Map.!? (head c)):s,m,tail c)
-    | x == "v" = (e, (snd (Map.elemAt (read (snd (Map.findWithDefault ("150","150") (head c) e))) m)):s, m, tail c)
-    where x = fst (Map.findWithDefault ("150","150") (head c) e)
+    | x == "c" = (e, snd (Map.findWithDefault ("-1","-1") (head c) e):s,m,tail c)
+    | x == "v" = (e, (m V.! (read (snd (Map.findWithDefault ("-1","-1") (head c) e)))):s, m, tail c)
+    -- Error! Variable not found in memory!
+    | x == "-1" = (e,s,m,c)
+    where x = fst (Map.findWithDefault ("-1","-1") (head c) e)
+
 
 evalPlus :: (E, S, M, C) -> (E, S, M, C)
 evalPlus (e,s,m,c) = (e,show(addOp x y):ns,m,tail c)
