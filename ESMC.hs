@@ -10,7 +10,7 @@ import Commands
 eval :: (E, S, M, C) -> (E, S, M, C)
 eval (e,s,m,c)
    | null c = (e,s,m,c)
-   | x == "v" = eval (evalExp (e,s,m,c))
+   | x `elem` vars = eval (evalExp (e,s,m,c))
    | x == "+" = eval (evalExp (e,s,m,c))
    | x == "-" = eval (evalExp (e,s,m,c))
    | x == "*" = eval (evalExp (e,s,m,c))
