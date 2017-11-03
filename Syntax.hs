@@ -2,10 +2,11 @@
 module Syntax where
 
 import qualified Data.Map as Map
+import qualified Data.Vector as V
 
 type E = Map.Map String (String,String)
 type S = [String]
-type M = Map.Map String String
+type M = V.Vector String
 type C = [String]
 
 newtype PIdent =
