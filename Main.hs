@@ -1,18 +1,24 @@
 module Main where
 
 import qualified Data.Map as Map
+import qualified Data.Vector as V
+
 import Expressions
 import Commands
 import ESMC
 
-m0 = Map.empty
-m1 = Map.insert "a" "1" Map.empty
-m2 = Map.insert "b" "2" m1
-m3 = Map.insert "c" "2" m2
-m4 = Map.insert "d" "3" m3
-m = Map.insert "e" "2" m4
+a :: [String]
+a = ["10","20","20","30","20","50"]
 
-env = Map.empty
+m :: V.Vector String
+m = V.fromList a
+
+env1 :: Map.Map String (String,String)
+env1 = Map.insert "a" ("c","1") Map.empty
+env2 = Map.insert "b" ("v","0") env1
+env3 = Map.insert "c" ("v","1") env2
+env4 = Map.insert "d" ("c","4") env3
+env = Map.insert "e" ("v","2") env4
 
 -- Expressions
 varExpr = (env,[],m,["a","b"])
@@ -42,13 +48,13 @@ nilCmd = (env,[],m,["nil"])
 attrCmd = (env,[],m,["2",":=","a","6",":=","b"])
 ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c","fimElse","200",":=","e"])
 ifCmd1 = (env,[],m,["if","e","6","=","then","1",":=","c","else","8",":=","c","fimElse"])
-whileCmd = (env,[],m,["while","b","0","=","~","do","b","1","-",":=","b","fimDo"])
+whileCmd = (env,[],m,["while","e","0","=","~","do","e","1","-",":=","e","fimDo"])
 
 fact = (env,[],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])
 
 
 main = do
-    -- Expressions Tests
+    {- | Expressions Tests
     print("Expressions")
     print (evalExp varExpr)
     print (evalExp sumExpr)
@@ -58,7 +64,9 @@ main = do
     print (evalExp mulExpr)
     print (evalExp compExpr)
     print (evalExp compExpr2)
-    -- Boolean Expressions Test
+    -}
+
+    {- | Boolean Expressions Test
     print ("Boolean Expressions")
     print (evalExp trueExpr)
     print (evalExp falseExpr)
@@ -71,16 +79,21 @@ main = do
     print (evalExp orExpr1)
     print (evalExp negExpr)
     print (evalExp negExpr1)
-    -- Commands
+    -}
+
+    {- | Commands
     print ("Commands")
     print (evalCMD nilCmd)
     print (evalCMD attrCmd)
     print (evalCMD ifCmd)
     print (evalCMD ifCmd1)
     print (evalCMD whileCmd)
-    -- Factorial
+    -}
+
+    {- | Factorial
     print ("Factorial")
     print (evalCMD fact)
+    -}
 
     -- Generic Eval --
     print ("Generic eval")
