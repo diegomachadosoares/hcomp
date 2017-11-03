@@ -1,6 +1,7 @@
 module Commands where
 
 import qualified Data.Map as Map
+import qualified Data.Vector as V
 import Data.List
 
 import Syntax
@@ -11,7 +12,10 @@ evalNil :: (E, S, M, C) -> (E, S, M, C)
 evalNil (e,s,m,c) = (e,s,m,tail c)
 
 evalAttr :: (E, S, M, C) -> (E, S, M, C)
-evalAttr (e,s,m,c) = (e,tail s,Map.insert (head c) (head s) m,tail c)
+evalAttr (e,s,m,c)
+    | x == -1 = (e,s,m,c)
+    | otherwise = (e, tail s,(m V.// [(x, (head s))]),c)
+    where x = read (snd (Map.findWithDefault ("-1","-1") (head c) e))
 
 evalIF :: (E, S, M, C) -> (E, S, M, C)
 evalIF (e,s,m,c)
