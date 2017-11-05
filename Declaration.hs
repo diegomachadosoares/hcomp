@@ -7,7 +7,6 @@ import Data.Char
 import Syntax
 import HelperTools
 import Expressions
-import ESMC
 
 evalDec :: (E, S, M, C) -> (E, S, M, C)
 evalDec (e,s,m,c)
@@ -19,8 +18,8 @@ evalConst :: (E, S, M, C) -> (E, S, M, C)
 evalConst (e,s,m,c)
    | x == "int" = evalConst (evalDecExp(e,s,m,tail c))
    | x == "boolean" = evalConst (evalDecBoolean(e,s,m,tail c))
-   | x == ":=" = eval (f,tail s,m,tail c)
-   | x == "fimElse" = eval (f,tail s,m,tail c)
+   | x == ":=" = (f,tail s,m,tail c)
+   | x == "fimElse" = (f,tail s,m,tail c)
    where x = head c
          f = Map.insert (head c) ("c",head s) e
 
@@ -28,8 +27,8 @@ evalEVar :: (E, S, M, C) -> (E, S, M, C)
 evalEVar (e,s,m,c)
    | x == "int" = evalConst (evalDecExp(e,s,m,tail c))
    | x == "boolean" = evalConst (evalDecBoolean(e,s,m,tail c))
-   | x == ":=" = eval (f,tail s,Map.insert (head c) (head s) m,tail c)
-   | x == "fimElse" = eval (f,tail s,Map.insert (head c) (head s) m,tail c)
+   | x == ":=" = (f,tail s,Map.insert (head c) (head s) m,tail c)
+   | x == "fimElse" = (f,tail s,Map.insert (head c) (head s) m,tail c)
    where x = head c
          f = Map.insert (head c) ("v",show (Map.findIndex (head c) m)) e
 
