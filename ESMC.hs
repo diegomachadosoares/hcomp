@@ -6,6 +6,7 @@ import Data.Char
 import Syntax
 import Expressions
 import Commands
+import Declaration
 
 eval :: (E, S, M, C) -> (E, S, M, C)
 eval (e,s,m,c)
@@ -23,5 +24,7 @@ eval (e,s,m,c)
    | x == ":=" = eval (evalCMD (e,s,m,c))
    | x == "if" = eval (evalCMD (e,s,m,c))
    | x == "while" = eval (evalCMD (e,s,m,c))
+   | x == "const" = eval (evalDec (e,s,m,c))
+   | x == "var" = eval (evalDec (e,s,m,c))
    | otherwise = eval (eval (e,x:s,m,tail c))
     where x = head c

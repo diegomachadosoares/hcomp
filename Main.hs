@@ -9,9 +9,10 @@ import ESMC
 
 a :: [String]
 a = ["10","20","20","30","20","50"]
+b = []
 
 m :: V.Vector String
-m = V.fromList a
+m = V.fromList b
 
 env1 :: Map.Map String (String,String)
 env1 = Map.insert "a" ("c","1") Map.empty
@@ -20,7 +21,7 @@ env3 = Map.insert "c" ("v","1") env2
 env4 = Map.insert "d" ("c","4") env3
 env = Map.insert "e" ("v","2") env4
 
--- Expressions
+-- | Expressions
 varExpr = (env,[],m,["a","b"])
 sumExpr = (env,[],m,["1","2","+"]) -- 3
 sumExpr1 = (env,[],m,["a","b","+"]) -- 3
@@ -30,7 +31,7 @@ mulExpr = (env,[],m,["1","2","*"]) -- 2
 compExpr = (env,[],m,["1","2","+","6","3","-","*"]) -- 9
 compExpr2 = (env,[],m,["1","2","+","6","3","-","*","1","+"]) -- 10
 
--- BooleanExpressions
+-- | BooleanExpressions
 trueExpr = (env,[],m,["tt"])
 falseExpr = (env,[],m,["ff"])
 eqExpr = (env,[],m,["a","b","="])
@@ -43,7 +44,7 @@ orExpr1 = (env,[],m,["ff","ff","or"])
 negExpr = (env,[],m,["tt","~"])
 negExpr1 = (env,[],m,["ff","~"])
 
--- Commands
+-- | Commands
 nilCmd = (env,[],m,["nil"])
 attrCmd = (env,[],m,["2",":=","a","6",":=","b"])
 ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c","fimElse","200",":=","e"])
@@ -52,6 +53,11 @@ whileCmd = (env,[],m,["while","e","0","=","~","do","e","1","-",":=","e","fimDo"]
 
 fact = (env,[],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])
 
+
+-- | Declaration
+dec = (env, [], m, ["var", "int", "100", ":=", "x"])
+decIF = (env,[], m, ["const", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
+decIFN = (env,[], m, ["const", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
 
 main = do
     {- | Expressions Tests
@@ -95,7 +101,7 @@ main = do
     print (evalCMD fact)
     -}
 
-    -- Generic Eval --
+    {- | Generic Eval
     print ("Generic eval")
     print (eval varExpr)
     print (eval sumExpr)
@@ -105,3 +111,7 @@ main = do
     print (eval attrCmd)
     print (eval ifCmd)
     print (eval whileCmd)
+    -}
+    -- | print (eval dec)
+    -- | print (eval decIF)
+    print (eval decIFN)
