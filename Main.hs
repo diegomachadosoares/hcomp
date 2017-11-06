@@ -57,7 +57,9 @@ fact = (env,[],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y"
 -- | Declaration
 dec = (env, [], m, ["var", "int", "100", ":=", "x"])
 decIF = (env,[], m, ["const", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
+decIFVar = (env,[], m, ["var", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
 decIFN = (env,[], m, ["const", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
+decIFNVar = (env,[], m, ["var", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
 
 main = do
     {- | Expressions Tests
@@ -114,4 +116,6 @@ main = do
     -}
     -- | print (eval dec)
     -- | print (eval decIF)
-    print (eval decIFN)
+    -- | print (eval decIFVar)
+    -- | print (eval decIFN)
+    print (eval decIFNVar)
