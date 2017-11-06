@@ -12,7 +12,7 @@ a = ["10","20","20","30","20","50"]
 b = []
 
 m :: V.Vector String
-m = V.fromList b
+m = V.fromList a
 
 env1 :: Map.Map String (String,String)
 env1 = Map.insert "a" ("c","1") Map.empty
@@ -114,8 +114,12 @@ main = do
     print (eval ifCmd)
     print (eval whileCmd)
     -}
-    -- | print (eval dec)
-    -- | print (eval decIF)
-    -- | print (eval decIFVar)
-    -- | print (eval decIFN)
+    print (eval dec)
+    print ("---")
+    print (eval decIF)
+    print ("---")
+    print (eval decIFVar)
+    print ("---")
+    print (eval decIFN)
+    print ("---")
     print (eval decIFNVar)
