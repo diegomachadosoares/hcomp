@@ -60,6 +60,8 @@ decIF = (env,[], m, ["const", "int", "if", "tt", "then", "10", "else", "1", "fim
 decIFVar = (env,[], m, ["var", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
 decIFN = (env,[], m, ["const", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
 decIFNVar = (env,[], m, ["var", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
+decCMD = (env, [], m, ["var", "int", "100", ":=", "x","if","tt","then","var", "int", "1", ":=", "k", "1", "k","+", ":=", "k","else","nil","fimElse","2","x","+",":=","c"])
+decNCMD = (env, [], m, ["var", "int", "100", ":=", "x","if","ff","then","nil","else","var", "int", "1", ":=", "k", "1", "k","+", ":=", "k","nil","fimElse","2","x","+",":=","c"])
 
 main = do
     {- | Expressions Tests
@@ -114,6 +116,7 @@ main = do
     print (eval ifCmd)
     print (eval whileCmd)
     -}
+    {-
     print (eval dec)
     print ("---")
     print (eval decIF)
@@ -123,3 +126,6 @@ main = do
     print (eval decIFN)
     print ("---")
     print (eval decIFNVar)
+    print (eval decCMD)
+    -}
+    print (eval decNCMD)
