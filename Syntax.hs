@@ -4,24 +4,18 @@ module Syntax where
 import qualified Data.Map as Map
 import qualified Data.Vector as V
 
-type E = Map.Map String (String,String)
-type S = [String]
+type E = Map.Map String EnvVal
+type S = [Value]
 type M = V.Vector String
-type C = [String]
+type C = [Control]
 
--- | Memory Address of the variables
-newtype Loc = Loc Int
+data EnvVal = Loc Int | ValueI Int | ValueB Bool
     deriving (Show,Eq)
 
--- | Variable and Constant Values
-newtype Value = Value Int
+data Value = ValueEnv EnvVal | ValueCom Com
     deriving (Show,Eq)
 
--- | Environment recipient to hold constant values and variable addresses
-data EnvVal =
-  EnvLoc Loc
-  | EnvVal Value
-  deriving (Show,Eq)
+data Control = ControlC Com | ControlExp Exp
 
 newtype PIdent =
   PIdent ((Int,Int),String)
