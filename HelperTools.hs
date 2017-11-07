@@ -1,15 +1,32 @@
 module HelperTools where
-
 import Syntax
 
 filterS :: (a,b,c,d) -> (b)
 filterS (_,s,_,_) = (s)
 
-isValue :: EnvVal -> Bool
-isValue (ValueI _) = True
-isValue (ValueB _) = True
-isValue _ = False
+filterM :: (a,b,c,d) -> (c)
+filterM (_,_,m,_) = (m)
 
-isLoc :: EnvVal -> Bool
-isLoc (Loc _) = True
+convertLoc :: Loc -> Int
+convertLoc (Loc a) = a
+
+convStr :: Str -> Value
+convStr (ValueI a) = ValI a
+convStr (ValueB b) = ValB b
+
+convBnd :: Bnd -> Value
+convBnd (BndVal b) = convStr(b)
+
+isLoc :: Bnd -> Bool
+isLoc (BndLoc _) = True
 isLoc _ = False
+
+isStr :: Bnd -> Bool
+isStr (BndVal _) = True
+isStr _ = False
+
+getVar :: Contr -> [Char]
+getVar (Cvar a) = a
+
+rBnd :: Bnd -> Int
+rBnd (BndLoc (Loc a)) = a

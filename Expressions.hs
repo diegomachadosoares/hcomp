@@ -20,9 +20,9 @@ vars = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r",
 
 evalVar :: (E, S, M, C) -> (E, S, M, C)
 evalVar (e,s,m,c)
-    | isValue x = (e, (Map.findWithDefault (Loc -1) (head c) e):s,m,tail c)
-    | isLoc x = (e, (m V.! (read (snd (Map.findWithDefault (Loc -1) (head c) e)))):s, m, tail c)
-    where x = read (Map.findWithDefault (Loc -1) (head c) e) :: EnvVal
+   | isStr x = (e, (convBnd (Map.findWithDefault (BndLoc $ Loc 1) (getVar(head c)) e)):s,m,tail c)
+   | isLoc x = (e, (convStr (m V.! rBnd (Map.findWithDefault (BndLoc $ Loc 1) (getVar $ head c) e))):s, m, tail c)
+    where x = (Map.findWithDefault (BndLoc $ Loc 1) (getVar (head c)) e)
 
 
 evalPlus :: (E, S, M, C) -> (E, S, M, C)
