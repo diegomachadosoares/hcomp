@@ -12,10 +12,13 @@ type C = [Control]
 data EnvVal = EnvLoc Loc | EnvValue Value
     deriving (Show,Eq)
 
-data Value = ValueEnv EnvVal | ValueCom Com | ValueInt Int
+data Value = ValueEnv EnvVal | ValueCom Com | ValueInt Int | ValueBool Bool
     deriving (Show,Eq)
 
-data Control = CtrlBlock Block | CtrlC Com | CtrlExp Exp | CtrlExp Exp
+data Control = CtrlBlock Block | CtrlC Com | CtrlExp Exp | CtrlExp Exp | CtrlInt Int | CtrlBool Bool
+    deriving (Show,Eq)
+
+data Bindable = BindInt Int | BindBool Bool
 
 data Loc = Loc Int
     deriving (Show,Eq)
