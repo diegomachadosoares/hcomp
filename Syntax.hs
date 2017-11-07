@@ -6,16 +6,19 @@ import qualified Data.Vector as V
 
 type E = Map.Map String EnvVal
 type S = [Value]
-type M = V.Vector String
+type M = V.Vector Value
 type C = [Control]
 
-data EnvVal = Loc Int | ValueI Int | ValueB Bool
+data EnvVal = EnvLoc Loc | EnvValue Value
     deriving (Show,Eq)
 
-data Value = ValueEnv EnvVal | ValueCom Com
+data Value = ValueEnv EnvVal | ValueCom Com | ValueInt Int
     deriving (Show,Eq)
 
-data Control = ControlC Com | ControlExp Exp
+data Control = CtrlBlock Block | CtrlC Com | CtrlExp Exp | CtrlExp Exp
+
+data Loc = Loc Int
+    deriving (Show,Eq)
 
 newtype PIdent =
   PIdent ((Int,Int),String)
