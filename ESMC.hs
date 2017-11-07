@@ -5,23 +5,27 @@ import Data.Char
 
 import Syntax
 import Expressions
-import BooleanExpressions
 import Commands
+import Declaration
 
 eval :: (E, S, M, C) -> (E, S, M, C)
 eval (e,s,m,c)
    | null c = (e,s,m,c)
-   | x == "v" = evalExp (e,s,m,c)
-   | x == "+" = evalExp (e,s,m,c)
-   | x == "-" = evalExp (e,s,m,c)
-   | x == "*" = evalExp (e,s,m,c)
-   | x == "nil" = evalCMD (e,s,m,c)
-   | x == ":=" = evalCMD (e,s,m,c)
-   | x == "if" = evalCMD (e,s,m,c)
-   | x == "tt" = evalBoolean (e,s,m,c)
-   | x == "ff" = evalBoolean (e,s,m,c)
-   | x == "=" = evalBoolean (e,s,m,c)
-   | x == "or" = evalBoolean (e,s,m,c)
-   | x == "~" = evalBoolean (e,s,m,c)
-   | otherwise = eval (e,x:s,m,tail c)
+   | x `elem` vars = eval (evalExp (e,s,m,c))
+   | x == "+" = eval (evalExp (e,s,m,c))
+   | x == "-" = eval (evalExp (e,s,m,c))
+   | x == "*" = eval (evalExp (e,s,m,c))
+   | x == "tt" = eval (evalExp (e,s,m,c))
+   | x == "ff" = eval (evalExp (e,s,m,c))
+   | x == "=" = eval (evalExp (e,s,m,c))
+   | x == "or" = eval (evalExp (e,s,m,c))
+   | x == "~" = eval (evalExp (e,s,m,c))
+   | x == "nil" = eval (evalCMD (e,s,m,c))
+   | x == ":=" = eval (evalCMD (e,s,m,c))
+   | x == "if" = eval (evalCMD (e,s,m,c))
+   | x == "while" = eval (evalCMD (e,s,m,c))
+   | x == "const" = eval (evalDec (e,s,m,c))
+   | x == "var" = eval (evalDec (e,s,m,c))
+   | isDigit (head x) = eval (e,x:s,m,tail c)
+   | otherwise = (e,s,m,c)
     where x = head c

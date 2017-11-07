@@ -1,21 +1,27 @@
 module Main where
 
 import qualified Data.Map as Map
+import qualified Data.Vector as V
+
 import Expressions
-import BooleanExpressions
 import Commands
 import ESMC
 
-m0 = Map.empty
-m1 = Map.insert "a" "1" Map.empty
-m2 = Map.insert "b" "2" m1
-m3 = Map.insert "c" "2" m2
-m4 = Map.insert "d" "3" m3
-m = Map.insert "e" "2" m4
+a :: [String]
+a = ["10","20","20","30","20","50"]
+b = []
 
-env = Map.empty
+m :: V.Vector String
+m = V.fromList a
 
--- Expressions
+env1 :: Map.Map String (String,String)
+env1 = Map.insert "a" ("c","1") Map.empty
+env2 = Map.insert "b" ("v","0") env1
+env3 = Map.insert "c" ("v","1") env2
+env4 = Map.insert "d" ("c","4") env3
+env = Map.insert "e" ("v","2") env4
+
+-- | Expressions
 varExpr = (env,[],m,["a","b"])
 sumExpr = (env,[],m,["1","2","+"]) -- 3
 sumExpr1 = (env,[],m,["a","b","+"]) -- 3
@@ -25,7 +31,7 @@ mulExpr = (env,[],m,["1","2","*"]) -- 2
 compExpr = (env,[],m,["1","2","+","6","3","-","*"]) -- 9
 compExpr2 = (env,[],m,["1","2","+","6","3","-","*","1","+"]) -- 10
 
--- BooleanExpressions
+-- | BooleanExpressions
 trueExpr = (env,[],m,["tt"])
 falseExpr = (env,[],m,["ff"])
 eqExpr = (env,[],m,["a","b","="])
@@ -38,18 +44,27 @@ orExpr1 = (env,[],m,["ff","ff","or"])
 negExpr = (env,[],m,["tt","~"])
 negExpr1 = (env,[],m,["ff","~"])
 
--- Commands
+-- | Commands
 nilCmd = (env,[],m,["nil"])
 attrCmd = (env,[],m,["2",":=","a","6",":=","b"])
-ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c"])
-ifCmd1 = (env,[],m,["if","e","6","=","then","1",":=","c","else","8",":=","c"])
-whileCmd = (env,[],m,["while","b","0","=","~","do","b","1","-",":=","b","fimDo"])
+ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c","fimElse","200",":=","e"])
+ifCmd1 = (env,[],m,["if","e","6","=","then","1",":=","c","else","8",":=","c","fimElse"])
+whileCmd = (env,[],m,["while","e","0","=","~","do","e","1","-",":=","e","fimDo"])
 
 fact = (env,[],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])
 
 
+-- | Declaration
+dec = (env, [], m, ["var", "int", "100", ":=", "x"])
+decIF = (env,[], m, ["const", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
+decIFVar = (env,[], m, ["var", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
+decIFN = (env,[], m, ["const", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
+decIFNVar = (env,[], m, ["var", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
+decCMD = (env, [], m, ["var", "int", "100", ":=", "x","if","tt","then","var", "int", "1", ":=", "k", "1", "k","+", ":=", "k","else","nil","fimElse","2","x","+",":=","c"])
+decNCMD = (env, [], m, ["var", "int", "100", ":=", "x","if","ff","then","nil","else","var", "int", "1", ":=", "k", "1", "k","+", ":=", "k","nil","fimElse","2","x","+",":=","c"])
+
 main = do
-    -- Expressions Tests
+    {- | Expressions Tests
     print("Expressions")
     print (evalExp varExpr)
     print (evalExp sumExpr)
@@ -59,31 +74,38 @@ main = do
     print (evalExp mulExpr)
     print (evalExp compExpr)
     print (evalExp compExpr2)
-    -- Boolean Expressions Test
+    -}
+
+    {- | Boolean Expressions Test
     print ("Boolean Expressions")
-    print (evalBoolean trueExpr)
-    print (evalBoolean falseExpr)
-    print (evalBoolean eqExpr)
-    print (evalBoolean eqExpr1)
-    print (evalBoolean eqExpr2)
-    print (evalBoolean eqExpr3)
-    print (evalBoolean orExpr)
-    print (evalBoolean orExpr0)
-    print (evalBoolean orExpr1)
-    print (evalBoolean negExpr)
-    print (evalBoolean negExpr1)
-    -- Commands
+    print (evalExp trueExpr)
+    print (evalExp falseExpr)
+    print (evalExp eqExpr)
+    print (evalExp eqExpr1)
+    print (evalExp eqExpr2)
+    print (evalExp eqExpr3)
+    print (evalExp orExpr)
+    print (evalExp orExpr0)
+    print (evalExp orExpr1)
+    print (evalExp negExpr)
+    print (evalExp negExpr1)
+    -}
+
+    {- | Commands
     print ("Commands")
     print (evalCMD nilCmd)
     print (evalCMD attrCmd)
     print (evalCMD ifCmd)
     print (evalCMD ifCmd1)
     print (evalCMD whileCmd)
-    -- Factorial
+    -}
+
+    {- | Factorial
     print ("Factorial")
     print (evalCMD fact)
+    -}
 
-    -- Generic Eval --
+    {- | Generic Eval
     print ("Generic eval")
     print (eval varExpr)
     print (eval sumExpr)
@@ -93,3 +115,17 @@ main = do
     print (eval attrCmd)
     print (eval ifCmd)
     print (eval whileCmd)
+    -}
+    {-
+    print (eval dec)
+    print ("---")
+    print (eval decIF)
+    print ("---")
+    print (eval decIFVar)
+    print ("---")
+    print (eval decIFN)
+    print ("---")
+    print (eval decIFNVar)
+    print (eval decCMD)
+    -}
+    print (eval decNCMD)
