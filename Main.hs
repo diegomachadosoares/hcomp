@@ -10,22 +10,21 @@ import Syntax
 
 --a :: [String]
 --a = ["10","20","20","30","20","50"]
-b = [ValueI 1, ValueI 10]
+b = [ValueI 1, ValueI 10, ValueI 100]
 
 m :: V.Vector Str
 m = V.fromList b
 
 env1 :: Map.Map String Bnd
-env = Map.empty
-env1 = Map.insert "a" (BndLoc (Loc 1)) Map.empty
-env2 = Map.insert "b" (BndLoc (Loc 0)) env1
---env3 = Map.insert "c" ("v","1") env2
---env4 = Map.insert "d" ("c","4") env3
---env = Map.insert "e" ("v","2") env4
+env1 = Map.insert "const_A" (BndVal $ ValueI 1) Map.empty
+env2 = Map.insert "const_B" (BndVal $ ValueI 0) env1
+env3 = Map.insert "var_A" (BndLoc (Loc 0)) env2
+env4 = Map.insert "var_B" (BndLoc (Loc 1)) env3
+env = Map.insert "var_C" (BndLoc (Loc 2)) env4
 
 -- | Expressions
-varExpr = (env,[],m,["a","b"])
-sumExpr = (env2,[],m,[(Cvar "a"),(Cvar "b"),Cexp Add]) -- 3
+varExpr = (env,[],m,[Cvar "var_A", Cvar "const_A"])
+sumExpr = (env,[],m,[(Cvar "const_A"),(Cvar "var_A"),Cexp Add])
 sumExpr1 = (env,[],m,["a","b","+"]) -- 3
 subExpr = (env,[],m,["1","2","-"]) -- 1
 subExpr1 = (env,[],m,["c","d","-"]) -- 1
@@ -64,12 +63,12 @@ decIFN = (env,[], m, ["const", "int", "if", "ff", "then", "10", "else", "19", "f
 decIFNVar = (env,[], m, ["var", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
 
 main = do
-    {- | Expressions Tests
+    -- | Expressions Tests
     print("Expressions")
-    print (evalExp varExpr)
-    print (evalExp sumExpr)-}
+    print $ evalExp varExpr
     print $ evalExp sumExpr
-{-    print (evalExp subExpr)
+    {-
+    print (evalExp subExpr)
     print (evalExp subExpr1)
     print (evalExp mulExpr)
     print (evalExp compExpr)
