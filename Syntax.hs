@@ -26,33 +26,18 @@ data Bnd =
 data Value = ValI Int | ValB Bool | Com
   deriving (Show,Eq)
 
-newtype PIdent =
-  PIdent ((Int,Int),String)
-  deriving(Eq,Ord,Show)
-
 data Contr = Ccom Com | Cexp Exp |Cvar [Char] | CBool Bool
   deriving (Show,Eq)
 
-data Decl =
-  Dec Type PIdent
-  deriving(Eq,Ord,Show)
-
-data Block =
-    BlockC Com
-  | BlockB [Com]
-  deriving(Eq,Ord,Show)
-
 data Com =
-    CDec Decl
-  | While Exp Block
-  | If Exp Block
-  | IfElse Exp Block Block
-  | Return Exp
-  deriving(Eq,Ord,Show)
+    While Exp [Contr]
+  | If Exp [Contr] [Contr]
+  | Attr String Exp
+  | Nill
+  deriving(Eq,Show)
 
 data Exp =
    Num Int
- | Atr PIdent Exp
  | Or
  | And Exp Exp
  | Eq
