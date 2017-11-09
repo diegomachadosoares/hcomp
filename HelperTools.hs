@@ -28,5 +28,14 @@ isStr _ = False
 getVar :: Contr -> [Char]
 getVar (Cvar a) = a
 
+getVal :: Contr -> Value
+getVal (CBool a) = ValB a
+
 rBnd :: Bnd -> Int
 rBnd (BndLoc (Loc a)) = a
+
+rIVal :: Value -> Int
+rIVal (ValI a) = a
+
+rBVal :: Value -> Bool
+rBVal (ValB a) = a

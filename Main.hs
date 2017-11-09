@@ -4,26 +4,27 @@ import qualified Data.Map as Map
 import qualified Data.Vector as V
 
 import Expressions
-import Commands
-import ESMC
+import Syntax
+--import Commands
+--import ESMC
 
-a :: [String]
-a = ["10","20","20","30","20","50"]
+--a :: [String]
+--a = ["10","20","20","30","20","50"]
 b = []
 
-m :: V.Vector String
-m = V.fromList a
+m :: V.Vector Str
+m = V.fromList b
 
-env1 :: Map.Map String (String,String)
-env1 = Map.insert "a" ("c","1") Map.empty
-env2 = Map.insert "b" ("v","0") env1
-env3 = Map.insert "c" ("v","1") env2
-env4 = Map.insert "d" ("c","4") env3
-env = Map.insert "e" ("v","2") env4
+env :: Map.Map String Bnd
+env = Map.insert "a" (BndVal (ValueI 1)) Map.empty
+--env2 = Map.insert "b" ("v","0") env1
+--env3 = Map.insert "c" ("v","1") env2
+--env4 = Map.insert "d" ("c","4") env3
+--env = Map.insert "e" ("v","2") env4
 
 -- | Expressions
 varExpr = (env,[],m,["a","b"])
-sumExpr = (env,[],m,["1","2","+"]) -- 3
+sumExpr = (env,[],m,[Cexp (Num 1),Cexp (Num 2),Cexp Add]) -- 3
 sumExpr1 = (env,[],m,["a","b","+"]) -- 3
 subExpr = (env,[],m,["1","2","-"]) -- 1
 subExpr1 = (env,[],m,["c","d","-"]) -- 1
@@ -65,14 +66,14 @@ main = do
     {- | Expressions Tests
     print("Expressions")
     print (evalExp varExpr)
-    print (evalExp sumExpr)
-    print (evalExp sumExpr1)
-    print (evalExp subExpr)
+    print (evalExp sumExpr)-}
+    print (show(evalExp sumExpr))
+{-    print (evalExp subExpr)
     print (evalExp subExpr1)
     print (evalExp mulExpr)
     print (evalExp compExpr)
     print (evalExp compExpr2)
-    -}
+-}
 
     {- | Boolean Expressions Test
     print ("Boolean Expressions")
@@ -114,7 +115,7 @@ main = do
     print (eval ifCmd)
     print (eval whileCmd)
     -}
-    print (eval dec)
+   {- print (eval dec)
     print ("---")
     print (eval decIF)
     print ("---")
@@ -123,3 +124,4 @@ main = do
     print (eval decIFN)
     print ("---")
     print (eval decIFNVar)
+-}

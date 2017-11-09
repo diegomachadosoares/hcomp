@@ -24,12 +24,14 @@ data Bnd =
   deriving (Show,Eq)
 
 data Value = ValI Int | ValB Bool | Com
+  deriving (Show,Eq)
 
 newtype PIdent =
   PIdent ((Int,Int),String)
   deriving(Eq,Ord,Show)
 
-data Contr = Ccom Com | Cexp Exp |Cvar [Char]
+data Contr = Ccom Com | Cexp Exp |Cvar [Char] | CBool Bool
+  deriving (Show,Eq)
 
 data Decl =
   Dec Type PIdent
@@ -55,16 +57,17 @@ data Exp =
  | And Exp Exp
  | Eq Exp Exp
  | Neq Exp Exp
- | Lt Exp Exp
- | Gt Exp Exp
- | Add Exp Exp
- | Sub Exp Exp
- | Mul Exp Exp
- | Div Exp Exp
- | Neg Exp
+ | Lt
+ | Gt
+ | Add
+ | Sub
+ | Mul
+ | Div
+ | Neg
  | NegInt Exp
  | Int Integer
  | Bool BoolT
+ | Null
   deriving (Eq,Ord,Show)
 
 data BoolT =
