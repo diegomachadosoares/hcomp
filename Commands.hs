@@ -9,7 +9,7 @@ import HelperTools
 import Expressions
 
 evalNil :: (E, S, M, C) -> (E, S, M, C)
-evalNil (e,s,m,c) = (e,s,m,tail c)
+evalNil (e,s,m,c) = (e,s,m,c)
 
 evalAttr :: (E, S, M, C) -> (E, S, M, C)
 evalAttr (e,s,m,c)

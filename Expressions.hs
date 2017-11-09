@@ -20,9 +20,9 @@ vars = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r",
 
 evalVar :: (E, S, M, C) -> (E, S, M, C)
 evalVar (e,s,m,c)
-   | isStr x = (e, (convBnd (Map.findWithDefault (BndLoc $ Loc 1) (getVar(head c)) e)):s,m,tail c)
-   | isLoc x = (e, (convStr (m V.! rBnd (Map.findWithDefault (BndLoc $ Loc 1) (getVar $ head c) e))):s, m, tail c)
-    where x = (Map.findWithDefault (BndLoc $ Loc 1) (getVar (head c)) e)
+   | isStr x = (e, (convBnd (Map.findWithDefault (BndLoc $ Loc 0) (getVar(head c)) e)):s,m,tail c)
+   | isLoc x = (e, (convStr (m V.! rBnd (Map.findWithDefault (BndLoc $ Loc 0) (getVar $ head c) e))):s, m, tail c)
+    where x = (Map.findWithDefault (BndLoc $ Loc 0) (getVar (head c)) e)
 
 
 evalPlus :: (E, S, M, C) -> (E, S, M, C)
@@ -61,14 +61,14 @@ evalNot (e,s,m,c)
 -- TODO eval infix expressions
 evalExp :: (E, S, M, C) -> (E, S, M, C)
 evalExp (e,s,m,[]) = (e,s,m,[])
-evalExp (e,s,m,(Cvar a):c)= evalExp (evalVar (e,s,m,c))
+evalExp (e,s,m,(Cvar a):c)= evalExp (evalVar (e,s,m,(Cvar a):c))
 evalExp (e,s,m,(Cexp Add):c) = evalExp (evalPlus (e,s,m,c))
-{-evalExp (e,s,m,(Cexp ()):cc) = evalExp (evalMinus (e,s,m,c))
-evalExp (e,s,m,(Cexp ()):cc) = evalExp (evalMul (e,s,m,c))
-evalExp (e,s,m,(Cexp ()):cc) = evalExp (evalT (e,s,m,c))
+evalExp (e,s,m,(Cexp Sub):cc) = evalExp (evalMinus (e,s,m,c))
+evalExp (e,s,m,(Cexp Mul):cc) = evalExp (evalMul (e,s,m,c))
+evalExp (e,s,m,(Cexp ):cc) = evalExp (evalT (e,s,m,c))
 evalExp (e,s,m,(Cexp ()):cc) = evalExp (evalT (e,s,m,c))
 evalExp (e,s,m,(Cexp ()):cc) = evalExp (evalEq (e,s,m,c))
 evalExp (e,s,m,(Cexp ()):cc) = evalExp (evalOr (e,s,m,c))
-evalExp (e,s,m,(Cexp ()):cc) = evalExp (evalNot (e,s,m,c))-}
+evalExp (e,s,m,(Cexp ()):cc) = evalExp (evalNot (e,s,m,c))
 evalExp (e,s,m,(Cexp (Num a)):c) = evalExp (e,(ValI a):s,m,c)
 evalExp (e,s,m,c) = (e,s,m,c)

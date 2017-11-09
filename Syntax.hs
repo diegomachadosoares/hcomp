@@ -53,29 +53,18 @@ data Com =
 data Exp =
    Num Int
  | Atr PIdent Exp
- | Or Exp Exp
+ | Or
  | And Exp Exp
- | Eq Exp Exp
- | Neq Exp Exp
+ | Eq
  | Lt
  | Gt
  | Add
  | Sub
  | Mul
  | Div
- | Neg
+ | Not
  | NegInt Exp
  | Int Integer
- | Bool BoolT
+ | EBool Bool
  | Null
   deriving (Eq,Ord,Show)
-
-data BoolT =
-    ETrue
-  | EFalse
-  deriving(Eq,Ord,Show)
-
-data Type =
-    TInt
-  | TBool
-  deriving(Eq,Ord,Show)
