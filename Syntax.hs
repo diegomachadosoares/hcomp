@@ -33,6 +33,8 @@ data Com =
     While Exp [Contr]
   | If Exp [Contr] [Contr]
   | Attr String Exp
+  | Var String String Exp
+  | Const String String Exp
   | Nill
   deriving(Eq,Show)
 
@@ -51,5 +53,6 @@ data Exp =
  | NegInt Exp
  | Int Integer
  | EBool Bool
+ | IfExp Exp Exp Exp
  | Null
   deriving (Eq,Ord,Show)

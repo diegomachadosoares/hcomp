@@ -18,6 +18,10 @@ convValStr :: Value -> Str
 convValStr (ValI a) = ValueI a
 convValStr (ValB a) = ValueB a
 
+convValBnd :: Value -> Bnd
+convValBnd (ValI a) = BndVal (ValueI a)
+convValBnd (ValB a) = BndVal (ValueB a)
+
 convBnd :: Bnd -> Value
 convBnd (BndVal b) = convStr(b)
 
