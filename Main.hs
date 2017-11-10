@@ -3,13 +3,13 @@ module Main where
 import qualified Data.Map as Map
 import qualified Data.Vector as V
 
+import Text.Pretty.Simple (pPrint)
+
 import Expressions
 import Syntax
 import Commands
 import HelperTools
 --import ESMC
-
-
 
 m :: V.Vector Str
 m = V.fromList [ValueI 1, ValueI 10, ValueI 100]
@@ -50,65 +50,63 @@ fact = (env,[],m,[(Ccom (Var "var_D" "int" [Num 3])),
 main = do
     {-
     -- | Expressions Tests
-    print("Expressions")
-    print $ filterS $ evalExp varExpr
-    print $ filterS $ evalExp sumExpr
-    print $ filterS $ evalExp subExpr
-    print $ filterS $ evalExp mulExpr
-    print $ filterS $ evalExp compExpr
+    pPrint("Expressions")
+    pPrint $ filterS $ evalExp varExpr
+    pPrint $ filterS $ evalExp sumExpr
+    pPrint $ filterS $ evalExp subExpr
+    pPrint $ filterS $ evalExp mulExpr
+    pPrint $ filterS $ evalExp compExpr
     -}
 
     {-
     -- | Boolean Expressions Test
-    print $ "Boolean Expressions"
-    print $ evalExp trueExpr
-    print (evalExp falseExpr)
-    print (evalExp eqExpr)
-    print (evalExp eqExpr1)
-    print (evalExp eqExpr2)
-    print (evalExp eqExpr3)
-    print (evalExp orExpr)
-    print (evalExp orExpr0)
-    print (evalExp orExpr1)
-    print (evalExp negExpr)
-    print (evalExp negExpr1)
+    pPrint $ "Boolean Expressions"
+    pPrint $ evalExp trueExpr
+    pPrint (evalExp falseExpr)
+    pPrint (evalExp eqExpr)
+    pPrint (evalExp eqExpr1)
+    pPrint (evalExp eqExpr2)
+    pPrint (evalExp eqExpr3)
+    pPrint (evalExp orExpr)
+    pPrint (evalExp orExpr0)
+    pPrint (evalExp orExpr1)
+    pPrint (evalExp negExpr)
+    pPrint (evalExp negExpr1)
     -}
 
     {-
     -- | Commands
-    print ("Commands")
-    print $ evalCMD nilCmd
-    print (evalCMD attrCmd)
-    print (evalCMD ifCmd)
-    print (evalCMD whileCmd)
-    print (evalCMD ifCmd1)
-    print (evalCMD whileCmd)
+    pPrint ("Commands")
+    pPrint $ evalCMD nilCmd
+    pPrint (evalCMD attrCmd)
+    pPrint (evalCMD ifCmd)
+    pPrint (evalCMD whileCmd)
+    pPrint (evalCMD ifCmd1)
+    pPrint (evalCMD whileCmd)
     -}
 
     -- | Factorial
-    print ("Factorial")
-    print $ filterE (evalCMD fact)
-    print $ filterS (evalCMD fact)
-    print $ filterM (evalCMD fact)
+    pPrint ("Factorial")
+    pPrint $ evalCMD (fact)
 
     {- | Generic Eval
-    print ("Generic eval")
-    print (eval varExpr)
-    print (eval sumExpr)
-    print (eval trueExpr)
-    print (eval eqExpr1)
-    print (eval negExpr)
-    print (eval attrCmd)
-    print (eval ifCmd)
-    print (eval whileCmd)
+    pPrint ("Generic eval")
+    pPrint (eval varExpr)
+    pPrint (eval sumExpr)
+    pPrint (eval trueExpr)
+    pPrint (eval eqExpr1)
+    pPrint (eval negExpr)
+    pPrint (eval attrCmd)
+    pPrint (eval ifCmd)
+    pPrint (eval whileCmd)
     -}
-   {- print (eval dec)
-    print ("---")
-    print (eval decIF)
-    print ("---")
-    print (eval decIFVar)
-    print ("---")
-    print (eval decIFN)
-    print ("---")
-    print (eval decIFNVar)
+   {- pPrint (eval dec)
+    pPrint ("---")
+    pPrint (eval decIF)
+    pPrint ("---")
+    pPrint (eval decIFVar)
+    pPrint ("---")
+    pPrint (eval decIFN)
+    pPrint ("---")
+    pPrint (eval decIFNVar)
 -}
