@@ -1,6 +1,10 @@
 module HelperTools where
 import Syntax
 
+
+filterE :: (a,b,c,d) -> (a)
+filterE (e,_,_,_) = (e)
+
 filterS :: (a,b,c,d) -> (b)
 filterS (_,s,_,_) = (s)
 

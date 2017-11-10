@@ -9,10 +9,10 @@ import Commands
 import HelperTools
 --import ESMC
 
-b = [ValueI 1, ValueI 10, ValueI 100]
+
 
 m :: V.Vector Str
-m = V.fromList b
+m = V.fromList [ValueI 1, ValueI 10, ValueI 100]
 
 env1 :: Map.Map String Bnd
 env1 = Map.insert "const_A" (BndVal $ ValueI 1) Map.empty
@@ -20,44 +20,43 @@ env2 = Map.insert "const_B" (BndVal $ ValueI 2) env1
 env3 = Map.insert "var_A" (BndLoc (Loc 0)) env2
 env4 = Map.insert "var_B" (BndLoc (Loc 1)) env3
 env = Map.insert "var_C" (BndLoc (Loc 2)) env4
-{-
+
+
 -- | Expressions
-varExpr = (env,[],m,[Cvar "var_A", Cvar "const_A"])
-sumExpr = (env,[],m,[Cvar "const_A", Cvar "var_A", Cexp Add])
-subExpr = (env,[],m,[Cvar "const_A", Cvar "const_B", Cexp Sub])
-mulExpr = (env,[],m,[Cvar "var_A", Cvar "var_B", Cexp Mul])
-compExpr = (env,[],m,[Cvar "var_A", Cvar "var_B", Cexp Add, Cvar "const_A", Cvar "const_B", Cexp Mul, Cexp Add])
--}
+varExpr = (env,[],m,[Evar "var_A", Evar "const_A",Eq,Not])
+sumExpr = (env,[],m,[Evar "const_A", Evar "var_A", Add])
+subExpr = (env,[],m,[Evar "const_A", Evar "const_B", Sub])
+mulExpr = (env,[],m,[Evar "var_A", Evar "var_B", Mul])
+compExpr = (env,[],m,[Evar "var_A", Evar "var_B", Add, Evar "const_A", Evar "const_B", Mul, Add])
+
 -- | BooleanExpressions
-trueExpr = (env,[],m,[Cexp [EBool True]])
+trueExpr = (env,[],m,[EBool True])
+falseExpr = (env,[],m,[EBool False])
 
 -- | Commands
 nilCmd = (env,[],m,[Ccom Nill])
 ifCmd = (env,[],m,[Ccom (If [EBool True] [(Ccom (Attr "var_A" [Num 100]))] [(Ccom (Attr "var_A" [Num 1000]))])])
 ifNil = (env,[],m,[Ccom (If [EBool True] [Ccom Nill] [(Ccom (Attr "var_A" [Num 1000]))])])
-whileCmd = (env,[],m,["while","e","0","=","~","do","e","1","-",":=","e","fimDo"])
+whileCmd = (env,[],m,[(Ccom (Var "var_D" "int" [Num 10]))
+                     ,(Ccom (While [(Evar "var_D"),(Num 0),(Eq),Not]
+                     [(Ccom (Attr "var_D" [(Evar "var_D"),(Num 1),Sub]))]))])
 
+-- | Factorial
 fact = (env,[],m,[(Ccom (Var "var_D" "int" [Num 3])),
-    (Ccom (While [(Evar "var_D"),(Num 0),(Eq)]
+    (Ccom (While [(Evar "var_D"),(Num 0),(Eq),Not]
     [(Ccom (Attr "var_A" [(Evar "var_A"),(Evar "var_D"),Mul]))
     ,(Ccom (Attr "var_D" [(Evar "var_D"),(Num 1),Sub]))]))])
 
-
--- | Declaration
-dec = (env, [], m, ["var", "int", "100", ":=", "x"])
-decIF = (env,[], m, ["const", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
-decIFVar = (env,[], m, ["var", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
-decIFN = (env,[], m, ["const", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
-decIFNVar = (env,[], m, ["var", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
-
 main = do
-    {-- | Expressions Tests
+    {-
+    -- | Expressions Tests
     print("Expressions")
-    print $ evalExp varExpr
-    print $ evalExp sumExpr
-    print $ evalExp subExpr
-    print $ evalExp mulExpr
-    print $ evalExp compExpr-}
+    print $ filterS $ evalExp varExpr
+    print $ filterS $ evalExp sumExpr
+    print $ filterS $ evalExp subExpr
+    print $ filterS $ evalExp mulExpr
+    print $ filterS $ evalExp compExpr
+    -}
 
     {-
     -- | Boolean Expressions Test
@@ -75,21 +74,22 @@ main = do
     print (evalExp negExpr1)
     -}
 
-    -- | Commands
     {-
+    -- | Commands
     print ("Commands")
     print $ evalCMD nilCmd
     print (evalCMD attrCmd)
-    print (evalCMD whileCmd)
     print (evalCMD ifCmd)
+    print (evalCMD whileCmd)
     print (evalCMD ifCmd1)
     print (evalCMD whileCmd)
     -}
 
     -- | Factorial
-
     print ("Factorial")
-    print (filterM (evalCMD fact))
+    print $ filterE (evalCMD fact)
+    print $ filterS (evalCMD fact)
+    print $ filterM (evalCMD fact)
 
     {- | Generic Eval
     print ("Generic eval")

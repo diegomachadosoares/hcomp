@@ -23,6 +23,6 @@ evalExpIF (e,s,m,(IfExp a b d):c)
 
 evalDec :: (E, S, M, C) -> (E, S, M, C)
 evalDec (e,s,m,[]) = (e,s,m,[])
-evalDec (e,s,m,(Ccom (Var a b d)):c) = (((Map.insert a (BndLoc (Loc ( Vector.length m)))) e),s,m Vector.++ (Vector.singleton (convValStr(head(filterS (evalDecExp(e,s,m,d)))))),(Ccom (Var a b d)):c)
-evalDec (e,s,m,(Ccom (Const a b d)):c) =(Map.insert a (convValBnd(head (filterS (evalDecExp(e,s,m,d))))) e,s,m,(Ccom (Const a b d)):c)
+evalDec (e,s,m,(Ccom (Var a b d)):c) = (((Map.insert a (BndLoc (Loc ( Vector.length m)))) e),s,m Vector.++ (Vector.singleton (convValStr(head(filterS (evalDecExp(e,s,m,d)))))),c)
+evalDec (e,s,m,(Ccom (Const a b d)):c) = (Map.insert a (convValBnd(head (filterS (evalDecExp(e,s,m,d))))) e,s,m,c)
 evalDec (e,s,m,c) = (e,s,m,c)

@@ -27,9 +27,9 @@ evalCMD (e,s,m,(Ccom (While exp a)):c)
 
 evalCMD (e,s,m,(Ccom (Attr a exp)):c)
     | x == BndLoc (Loc (-1)) = (e,s,m,c)
-    | otherwise = (e,s,(m V.// [(rBnd x, convValStr(head (filterS (evalExp (e,s,m,exp)))))]),c)
+    | otherwise = evalCMD (e,s,(m V.// [(rBnd x, convValStr(head (filterS (evalExp (e,s,m,exp)))))]),c)
     where x = Map.findWithDefault (BndLoc $ Loc (-1)) a e
 
-evalCMD (e,s,m,(Ccom (Var a b exp)):c) = evalDec(e,s,m,(Ccom (Var a b exp)):c)
+evalCMD (e,s,m,(Ccom (Var a b exp)):c) = evalCMD (evalDec(e,s,m,(Ccom (Var a b exp)):c))
 
 evalCMD (e,s,m,c) = (e,s,m,c)

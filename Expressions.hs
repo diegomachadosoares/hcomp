@@ -52,8 +52,8 @@ evalOr (e,s,m,c) = if (not(rBVal(s !! 0))  && not(rBVal(s !! 1 ))) then (e,ValB 
 
 evalNot :: (E, S, M, Cexp) -> (E, S, M, Cexp)
 evalNot (e,s,m,c)
-    | rBVal(head s) = (e,ValB False:drop 1 s,m,c)
-    | otherwise = (e,ValB True:drop 1 s,m,c)
+    | rBVal(head s) = (e,ValB False:tail s,m,c)
+    | otherwise = (e,ValB True:tail s,m,c)
 
 evalExp :: (E, S, M, Cexp) -> (E, S, M, Cexp)
 evalExp (e,s,m,[]) = (e,s,m,[])
