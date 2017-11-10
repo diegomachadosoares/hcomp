@@ -27,7 +27,14 @@ data Bnd =
 data Value = ValI Int | ValB Bool | Com
   deriving (Show,Eq)
 
-data Contr = Ccom Com | Cexp [Exp] |Cvar [Char] | CBool Bool
+data Contr = Ccom Com | Cexp Exp | Cvar String | CBool Bool
+        |ADD
+        |SUB
+        |MUL
+        |EQU
+        |NOT
+        |OR
+
   deriving (Show,Eq)
 
 data Com =
