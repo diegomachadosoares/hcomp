@@ -21,7 +21,7 @@ evalCMD (e,s,m,(Ccom (If exp a b)):c)
     where x = rBVal(head (filterS (evalExp(e,s,m,exp))))
 
 evalCMD (e,s,m,(Ccom (While exp a)):c)
-    | x  = (e,filterS (evalCMD(e,s,m,a)),filterM (evalCMD(e,s,m,a)),(Ccom (While exp a)):c)
+    | x  = evalCMD(e,filterS (evalCMD(e,s,m,a)),filterM (evalCMD(e,s,m,a)),(Ccom (While exp a)):c)
     | otherwise = evalCMD(e,s,m,c)
     where x = rBVal (head (filterS (evalExp(e,s,m,exp))))
 

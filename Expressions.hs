@@ -45,15 +45,15 @@ evalT :: (E, S, M, Cexp) -> (E, S, M, Cexp)
 evalT (e,s,m,c) = (e,(getVal (head c)):s,m,tail c)
 
 evalEq :: (E, S, M, Cexp) -> (E, S, M, Cexp)
-evalEq (e,s,m,c) = if rBVal (s !! 0) == rBVal (s !! 1) then (e,ValB True:drop 2 s,m,tail c) else (e,ValB False:drop 2 s,m,tail c)
+evalEq (e,s,m,c) = if (s !! 0) == (s !! 1) then (e,ValB True:drop 2 s,m,c) else (e,ValB False:drop 2 s,m,c)
 
 evalOr :: (E, S, M, Cexp) -> (E, S, M, Cexp)
-evalOr (e,s,m,c) = if (not(rBVal(s !! 0))  && not(rBVal(s !! 1 ))) then (e,ValB False:drop 2 s,m,tail c) else (e,ValB True:drop 2 s,m,tail c)
+evalOr (e,s,m,c) = if (not(rBVal(s !! 0))  && not(rBVal(s !! 1 ))) then (e,ValB False:drop 2 s,m,c) else (e,ValB True:drop 2 s,m,c)
 
 evalNot :: (E, S, M, Cexp) -> (E, S, M, Cexp)
 evalNot (e,s,m,c)
-    | rBVal(head s) = (e,ValB False:drop 1 s,m,tail c)
-    | otherwise = (e,ValB True:drop 1 s,m,tail c)
+    | rBVal(head s) = (e,ValB False:drop 1 s,m,c)
+    | otherwise = (e,ValB True:drop 1 s,m,c)
 
 evalExp :: (E, S, M, Cexp) -> (E, S, M, Cexp)
 evalExp (e,s,m,[]) = (e,s,m,[])
