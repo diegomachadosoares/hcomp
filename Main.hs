@@ -21,7 +21,7 @@ env3 = Map.insert "var_A" (BndLoc (Loc 0)) env2
 env4 = Map.insert "var_B" (BndLoc (Loc 1)) env3
 env = Map.insert "var_C" (BndLoc (Loc 2)) env4
 
-
+{-
 -- | Expressions
 varExpr = (env,[],m,[Evar "var_A", Evar "const_A",Eq,Not])
 sumExpr = (env,[],m,[Evar "const_A", Evar "var_A", Add])
@@ -29,10 +29,13 @@ subExpr = (env,[],m,[Evar "const_A", Evar "const_B", Sub])
 mulExpr = (env,[],m,[Evar "var_A", Evar "var_B", Mul])
 compExpr = (env,[],m,[Evar "var_A", Evar "var_B", Add, Evar "const_A", Evar "const_B", Mul, Add])
 
+-}
 -- | BooleanExpressions
-trueExpr = (env,[],m,[EBool True])
-falseExpr = (env,[],m,[EBool False])
+trueExpr = (env,[],m,[Cexp $ Not (EBool True)])
+falseExpr = (env,[],m,[Cexp $ Not (EBool False)])
+eqExpr = (env,[],m,[Cexp $ Not (Eq (Num 0) (Num 0))])
 
+{-
 -- | Commands
 nilCmd = (env,[],m,[Ccom Nill])
 ifCmd = (env,[],m,[Ccom (If [EBool True] [(Ccom (Attr "var_A" [Num 100]))] [(Ccom (Attr "var_A" [Num 1000]))])])
@@ -40,12 +43,12 @@ ifNil = (env,[],m,[Ccom (If [EBool True] [Ccom Nill] [(Ccom (Attr "var_A" [Num 1
 whileCmd = (env,[],m,[(Ccom (Var "var_D" "int" [Num 10]))
                      ,(Ccom (While [(Evar "var_D"),(Num 0),(Eq),Not]
                      [(Ccom (Attr "var_D" [(Evar "var_D"),(Num 1),Sub]))]))])
-
+-}
 -- | Factorial
-fact = (env,[],m,[(Ccom (Var "var_D" "int" [Num 3])),
-    (Ccom (While [(Evar "var_D"),(Num 0),(Eq),Not]
-    [(Ccom (Attr "var_A" [(Evar "var_A"),(Evar "var_D"),Mul]))
-    ,(Ccom (Attr "var_D" [(Evar "var_D"),(Num 1),Sub]))]))])
+fact = (env,[],m,[(Ccom (Var "var_D" "int" (Num 3))),
+    (Ccom (While (Not (Eq (Evar "var_D") (Num 0)))
+    [(Ccom (Attr "var_A" (Mul (Evar "var_A") (Evar "var_D"))))
+    ,(Ccom (Attr "var_D" (Sub (Evar "var_D") (Num 1))))]))])
 
 main = do
     {-
@@ -62,7 +65,7 @@ main = do
     -- | Boolean Expressions Test
     pPrint $ "Boolean Expressions"
     pPrint $ evalExp trueExpr
-    pPrint (evalExp falseExpr)
+    pPrint $ evalExp falseExpr
     pPrint (evalExp eqExpr)
     pPrint (evalExp eqExpr1)
     pPrint (evalExp eqExpr2)

@@ -61,6 +61,6 @@ data Exp =
  | Int Integer
  | EBool Bool
  | Evar String
- | IfExp [Exp] [Exp] [Exp]
+ | IfExp Exp Exp Exp
  | Null
   deriving (Eq,Ord,Show)

@@ -18,16 +18,16 @@ evalCMD (e,s,m,(Ccom Nill):c) = evalCMD (e,s,m,c)
 evalCMD (e,s,m,(Ccom (If exp a b)):c)
     | x = (e,filterS (evalCMD (e,s,m,a)),filterM (evalCMD (e,s,m,a)),c)
     | otherwise = (e,filterS (evalCMD (e,s,m,b)),filterM (evalCMD (e,s,m,b)),c)
-    where x = rBVal(head (filterS (evalExp(e,s,m,(Cexp exp)))))
+    where x = rBVal(head (filterS (evalExp(e,s,m,[(Cexp exp)]))))
 
 evalCMD (e,s,m,(Ccom (While exp a)):c)
     | x  = evalCMD(e,filterS (evalCMD(e,s,m,a)),filterM (evalCMD(e,s,m,a)),(Ccom (While exp a)):c)
     | otherwise = evalCMD(e,s,m,c)
-    where x = rBVal (head (filterS (evalExp(e,s,m,(Cexp exp)))))
+    where x = rBVal (head (filterS (evalExp(e,s,m,[(Cexp exp)]))))
 
 evalCMD (e,s,m,(Ccom (Attr a exp)):c)
     | x == BndLoc (Loc (-1)) = (e,s,m,c)
-    | otherwise = evalCMD (e,s,(m V.// [(rBnd x, convValStr(head (filterS (evalExp (e,s,m,(Cexp exp))))))]),c)
+    | otherwise = evalCMD (e,s,(m V.// [(rBnd x, convValStr(head (filterS (evalExp (e,s,m,[(Cexp exp)])))))]),c)
     where x = Map.findWithDefault (BndLoc $ Loc (-1)) a e
 
 evalCMD (e,s,m,(Ccom (Var a b exp)):c) = evalCMD (evalDec(e,s,m,(Ccom (Var a b exp)):c))
