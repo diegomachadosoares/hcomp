@@ -16,8 +16,8 @@ evalCMD (e,s,m,[]) = (e,s,m,[])
 evalCMD (e,s,m,(Ccom Nill):c) = evalCMD (e,s,m,c)
 
 evalCMD (e,s,m,(Ccom (If exp a b)):c)
-    | x = (e,filterS (evalCMD (e,s,m,a)),filterM (evalCMD (e,s,m,a)),c)
-    | otherwise = (e,filterS (evalCMD (e,s,m,b)),filterM (evalCMD (e,s,m,b)),c)
+    | x = evalCMD (e,filterS (evalCMD (e,s,m,a)),filterM (evalCMD (e,s,m,a)),c)
+    | otherwise = evalCMD (e,filterS (evalCMD (e,s,m,b)),filterM (evalCMD (e,s,m,b)),c)
     where x = rBVal(head (filterS (evalExp(e,s,m,[(Cexp exp)]))))
 
 evalCMD (e,s,m,(Ccom (While exp a)):c)
@@ -32,5 +32,5 @@ evalCMD (e,s,m,(Ccom (Attr a exp)):c)
 
 evalCMD (e,s,m,(Ccom (Var a b exp)):c) = evalCMD (evalDec(e,s,m,(Ccom (Var a b exp)):c))
 evalCMD (e,s,m,(Ccom (Const a b exp)):c) = evalCMD (evalDec(e,s,m,(Ccom (Const a b exp)):c))
-
+evalCMD (e,s,m,(Ccom (Sequence a b)):c) = evalCMD (e,s,m,(Ccom a):(Ccom b):c)
 evalCMD (e,s,m,c) = (e,s,m,c)

@@ -43,11 +43,12 @@ data Com =
   | Attr String Exp
   | Var String String Exp
   | Const String String Exp
+  | Sequence Com Com
   | Nill
   deriving(Eq,Show)
 
 data Exp =
-   Num Int
+   Num Integer
  | Or Exp Exp
  | Eq Exp Exp
  | Lt Exp Exp

@@ -9,25 +9,26 @@ import Expressions
 import Syntax
 import Commands
 import HelperTools
+import Parser
 --import ESMC
 
 m :: V.Vector Str
-m = V.fromList [ValueI 1, ValueI 10, ValueI 100]
+m = V.fromList [ValueI 5, ValueI 10, ValueI 100]
 
 env1 :: Map.Map String Bnd
-env1 = Map.insert "const_A" (BndVal $ ValueI 1) Map.empty
-env2 = Map.insert "const_B" (BndVal $ ValueI 2) env1
-env3 = Map.insert "var_A" (BndLoc (Loc 0)) env2
-env4 = Map.insert "var_B" (BndLoc (Loc 1)) env3
-env = Map.insert "var_C" (BndLoc (Loc 2)) env4
+env1 = Map.insert "constA" (BndVal $ ValueI 1) Map.empty
+env2 = Map.insert "constB" (BndVal $ ValueI 2) env1
+env3 = Map.insert "varA" (BndLoc (Loc 0)) env2
+env4 = Map.insert "varB" (BndLoc (Loc 1)) env3
+env = Map.insert "varC" (BndLoc (Loc 2)) env4
 
 {-
 -- | Expressions
-varExpr = (env,[],m,[Evar "var_A", Evar "const_A",Eq,Not])
-sumExpr = (env,[],m,[Evar "const_A", Evar "var_A", Add])
-subExpr = (env,[],m,[Evar "const_A", Evar "const_B", Sub])
-mulExpr = (env,[],m,[Evar "var_A", Evar "var_B", Mul])
-compExpr = (env,[],m,[Evar "var_A", Evar "var_B", Add, Evar "const_A", Evar "const_B", Mul, Add])
+varExpr = (env,[],m,[Evar "varA", Evar "constA",Eq,Not])
+sumExpr = (env,[],m,[Evar "constA", Evar "varA", Add])
+subExpr = (env,[],m,[Evar "constA", Evar "constB", Sub])
+mulExpr = (env,[],m,[Evar "varA", Evar "varB", Mul])
+compExpr = (env,[],m,[Evar "varA", Evar "varB", Add, Evar "constA", Evar "constB", Mul, Add])
 
 -}
 -- | BooleanExpressions
@@ -38,18 +39,22 @@ eqExpr = (env,[],m,[Cexp $ Not (Eq (Num 0) (Num 0))])
 {-
 -- | Commands
 nilCmd = (env,[],m,[Ccom Nill])
-ifCmd = (env,[],m,[Ccom (If [EBool True] [(Ccom (Attr "var_A" [Num 100]))] [(Ccom (Attr "var_A" [Num 1000]))])])
-ifNil = (env,[],m,[Ccom (If [EBool True] [Ccom Nill] [(Ccom (Attr "var_A" [Num 1000]))])])
-whileCmd = (env,[],m,[(Ccom (Var "var_D" "int" [Num 10]))
-                     ,(Ccom (While [(Evar "var_D"),(Num 0),(Eq),Not]
-                     [(Ccom (Attr "var_D" [(Evar "var_D"),(Num 1),Sub]))]))])
+ifCmd = (env,[],m,[Ccom (If [EBool True] [(Ccom (Attr "varA" [Num 100]))] [(Ccom (Attr "varA" [Num 1000]))])])
+ifNil = (env,[],m,[Ccom (If [EBool True] [Ccom Nill] [(Ccom (Attr "varA" [Num 1000]))])])
+whileCmd = (env,[],m,[(Ccom (Var "varD" "int" [Num 10]))
+                     ,(Ccom (While [(Evar "varD"),(Num 0),(Eq),Not]
+                     [(Ccom (Attr "varD" [(Evar "varD"),(Num 1),Sub]))]))])
 -}
 -- | Factorial
-fact = (env,[],m,[(Ccom (Var "var_D" "int" (Num 3))),
-    (Ccom (While (Not (Eq (Evar "var_D") (Num 0)))
-    [(Ccom (Attr "var_A" (Mul (Evar "var_A") (Evar "var_D"))))
-    ,(Ccom (Attr "var_D" (Sub (Evar "var_D") (Num 1))))]))])
+fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3))),
+    (Ccom (While (Not (Eq (Evar "varD") (Num 0)))
+    [(Ccom (Attr "varA" (Mul (Evar "varA") (Evar "varD"))))
+    ,(Ccom (Attr "varD" (Sub (Evar "varD") (Num 1))))]))])
 
+-- | Parser
+parserIf = (env,[],m,[Ccom (parseString "if varA = 5 then varA := 10 else varA := 2")])
+parserWhile = (env,[],m,[Ccom (parseString "while (not (varA = 10)) do varA := varA + 1")])
+parser = (env,[],m,[Ccom (parseString "{ if 2 = 2 then varA := 1 else varA := 2 end; { varA := 15 ; varA := 7 } }")])
 main = do
     {-
     -- | Expressions Tests
@@ -88,9 +93,11 @@ main = do
     pPrint (evalCMD whileCmd)
     -}
 
+    {-
     -- | Factorial
     pPrint ("Factorial")
     pPrint $ evalCMD (fact)
+    -}
 
     {- | Generic Eval
     pPrint ("Generic eval")
@@ -112,4 +119,9 @@ main = do
     pPrint (eval decIFN)
     pPrint ("---")
     pPrint (eval decIFNVar)
--}
+    -}
+
+    -- | Parser
+    --pPrint $ evalCMD (parserIf)
+    --pPrint $ evalCMD (parserWhile)
+    pPrint $ evalCMD (parser)
