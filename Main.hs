@@ -5,7 +5,7 @@ import qualified Data.Vector as V
 
 import Expressions
 import Syntax
---import Commands
+import Commands
 --import ESMC
 
 --a :: [String]
@@ -24,7 +24,7 @@ env = Map.insert "var_C" (BndLoc (Loc 2)) env4
 
 -- | Expressions
 varExpr = (env,[],m,[Cvar "var_A", Cvar "const_A"])
-sumExpr = (env,[],m,[(Cvar "const_A"),(Cvar "var_A"),Cexp Add])
+--sumExpr = (env,[],m,[(Cvar "const_A"),(Cvar "var_A"),Cexp Add])
 sumExpr1 = (env,[],m,["a","b","+"]) -- 3
 subExpr = (env,[],m,["1","2","-"]) -- 1
 subExpr1 = (env,[],m,["c","d","-"]) -- 1
@@ -33,7 +33,7 @@ compExpr = (env,[],m,["1","2","+","6","3","-","*"]) -- 9
 compExpr2 = (env,[],m,["1","2","+","6","3","-","*","1","+"]) -- 10
 
 -- | BooleanExpressions
-trueExpr = (env,[],m,["tt"])
+trueExpr = (env,[],m,[EBool True])
 falseExpr = (env,[],m,["ff"])
 eqExpr = (env,[],m,["a","b","="])
 eqExpr1 = (env,[],m,["c","b","="])
@@ -48,7 +48,7 @@ negExpr1 = (env,[],m,["ff","~"])
 -- | Commands
 nilCmd = (env,[],m,["nil"])
 attrCmd = (env,[],m,["2",":=","a","6",":=","b"])
-ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c","fimElse","200",":=","e"])
+ifCmd = (env,[],m,[Ccom (If [EBool True] [(Ccom (Attr "var_A" [Num 100]))] [(Ccom (Attr "var_A" [Num 1000]))])])
 ifCmd1 = (env,[],m,["if","e","6","=","then","1",":=","c","else","8",":=","c","fimElse"])
 whileCmd = (env,[],m,["while","e","0","=","~","do","e","1","-",":=","e","fimDo"])
 
@@ -65,8 +65,8 @@ decIFNVar = (env,[], m, ["var", "int", "if", "ff", "then", "10", "else", "19", "
 main = do
     -- | Expressions Tests
     print("Expressions")
-    print $ evalExp varExpr
-    print $ evalExp sumExpr
+    --print $ evalExp varExpr
+    --print $ evalExp sumExpr
     {-
     print (evalExp subExpr)
     print (evalExp subExpr1)
@@ -75,10 +75,10 @@ main = do
     print (evalExp compExpr2)
 -}
 
-    {- | Boolean Expressions Test
+    -- | Boolean Expressions Test
     print ("Boolean Expressions")
-    print (evalExp trueExpr)
-    print (evalExp falseExpr)
+   -- print (evalExp trueExpr)
+   {- print (evalExp falseExpr)
     print (evalExp eqExpr)
     print (evalExp eqExpr1)
     print (evalExp eqExpr2)
@@ -94,8 +94,9 @@ main = do
     print ("Commands")
     print (evalCMD nilCmd)
     print (evalCMD attrCmd)
+    -}
     print (evalCMD ifCmd)
-    print (evalCMD ifCmd1)
+    {- print (evalCMD ifCmd1)
     print (evalCMD whileCmd)
     -}
 

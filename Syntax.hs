@@ -8,6 +8,7 @@ type E = Map.Map String Bnd
 type S = [Value]
 type M = V.Vector Str
 type C = [Contr]
+type Cexp = [Exp]
 
 -- | Memory Address of the variables
 data Loc = Loc Int
@@ -26,15 +27,15 @@ data Bnd =
 data Value = ValI Int | ValB Bool | Com
   deriving (Show,Eq)
 
-data Contr = Ccom Com | Cexp Exp |Cvar [Char] | CBool Bool
+data Contr = Ccom Com | Cexp [Exp] |Cvar [Char] | CBool Bool
   deriving (Show,Eq)
 
 data Com =
-    While Exp [Contr]
-  | If Exp [Contr] [Contr]
-  | Attr String Exp
-  | Var String String Exp
-  | Const String String Exp
+    While [Exp] [Contr]
+  | If [Exp] [Contr] [Contr]
+  | Attr String [Exp]
+  | Var String String [Exp]
+  | Const String String [Exp]
   | Nill
   deriving(Eq,Show)
 
@@ -53,6 +54,7 @@ data Exp =
  | NegInt Exp
  | Int Integer
  | EBool Bool
- | IfExp Exp Exp Exp
+ | Evar [Char]
+ | IfExp [Exp] [Exp] [Exp]
  | Null
   deriving (Eq,Ord,Show)

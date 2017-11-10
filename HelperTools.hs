@@ -33,11 +33,11 @@ isStr :: Bnd -> Bool
 isStr (BndVal _) = True
 isStr _ = False
 
-getVar :: Contr -> [Char]
-getVar (Cvar a) = a
+getVar :: Exp -> [Char]
+getVar (Evar a) = a
 
-getVal :: Contr -> Value
-getVal (CBool a) = ValB a
+getVal :: Exp -> Value
+getVal (EBool a) = ValB a
 
 rBnd :: Bnd -> Int
 rBnd (BndLoc (Loc a)) = a
@@ -47,3 +47,12 @@ rIVal (ValI a) = a
 
 rBVal :: Value -> Bool
 rBVal (ValB a) = a
+
+isTrue :: Value -> Bool
+isTrue (ValB True) = True
+isTrue _ = False
+
+isFalse :: Value -> Bool
+isFalse (ValB False) = True
+isFalse _ = False
+
