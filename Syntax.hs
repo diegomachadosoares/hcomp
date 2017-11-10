@@ -41,20 +41,19 @@ data Com =
 
 data Exp =
    Num Int
- | Or
- | And Exp Exp
- | Eq
- | Lt
- | Gt
- | Add
- | Sub
- | Mul
- | Div
- | Not
+ | Or Exp Exp
+ | Eq Exp Exp
+ | Lt Exp Exp
+ | Gt Exp Exp
+ | Add Exp Exp
+ | Sub Exp Exp
+ | Mul Exp Exp
+ | Div Exp Exp
+ | Not Exp
  | NegInt Exp
  | Int Integer
  | EBool Bool
- | Evar [Char]
+ | Evar String
  | IfExp [Exp] [Exp] [Exp]
  | Null
   deriving (Eq,Ord,Show)
