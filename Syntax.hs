@@ -31,11 +31,11 @@ data Contr = Ccom Com | Cexp [Exp] |Cvar [Char] | CBool Bool
   deriving (Show,Eq)
 
 data Com =
-    While [Exp] [Contr]
-  | If [Exp] [Contr] [Contr]
-  | Attr String [Exp]
-  | Var String String [Exp]
-  | Const String String [Exp]
+    While Exp [Contr]
+  | If Exp [Contr] [Contr]
+  | Attr String Exp
+  | Var String String Exp
+  | Const String String Exp
   | Nill
   deriving(Eq,Show)
 
