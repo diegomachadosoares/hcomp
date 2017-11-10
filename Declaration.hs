@@ -9,12 +9,12 @@ import Syntax
 import HelperTools
 import Expressions
 
-evalDecExp :: (E, S, M, Cexp) -> (E, S, M, Cexp)
+evalDecExp :: (E, S, M, C) -> (E, S, M, C)
 evalDecExp (e,s,m,[]) = (e,s,m,[])
 evalDecExp (e,s,m,(IfExp a b d):c)= evalExpIF (e,s,m,(IfExp a b d):c)
 evalDecExp (e,s,m,c)= evalExp(e,s,m,c)
 
-evalExpIF :: (E, S, M, Cexp) -> (E, S, M, Cexp)
+evalExpIF :: (E, S, M, C) -> (E, S, M, C)
 evalExpIF (e,s,m,(IfExp a b d):c)
     | x = (e,v,m,tail c)
     | otherwise = evalDecExp(e,s,m,tail c)
