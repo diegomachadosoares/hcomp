@@ -38,6 +38,7 @@ eqExpr = (env,[],m,[Cexp $ Not (Eq (Num 0) (Num 0))])
 
 {-
 -- | Commands
+
 nilCmd = (env,[],m,[Ccom Nill])
 ifCmd = (env,[],m,[Ccom (If [EBool True] [(Ccom (Attr "varA" [Num 100]))] [(Ccom (Attr "varA" [Num 1000]))])])
 ifNil = (env,[],m,[Ccom (If [EBool True] [Ccom Nill] [(Ccom (Attr "varA" [Num 1000]))])])
@@ -55,6 +56,7 @@ fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3))),
 parserIf = (env,[],m,[Ccom (parseString "if varA = 5 then varA := 10 else varA := 2")])
 parserWhile = (env,[],m,[Ccom (parseString "while (not (varA = 10)) do varA := varA + 1")])
 parser = (env,[],m,[Ccom (parseString "{ if 2 = 2 then varA := 1 else varA := 2 end; { varA := 15 ; varA := 7 } }")])
+
 main = do
     {-
     -- | Expressions Tests
@@ -110,6 +112,7 @@ main = do
     pPrint (eval ifCmd)
     pPrint (eval whileCmd)
     -}
+
    {- pPrint (eval dec)
     pPrint ("---")
     pPrint (eval decIF)

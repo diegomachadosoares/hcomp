@@ -59,4 +59,3 @@ isTrue _ = False
 isFalse :: Value -> Bool
 isFalse (ValB False) = True
 isFalse _ = False
-

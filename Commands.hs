@@ -3,6 +3,7 @@ module Commands where
 import qualified Data.Map as Map
 import qualified Data.Vector as V
 import Data.List
+import Data.Char
 
 import Syntax
 import HelperTools

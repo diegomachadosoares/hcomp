@@ -26,5 +26,6 @@ eval (e,s,m,c)
    | x == "while" = eval (evalCMD (e,s,m,c))
    | x == "const" = eval (evalDec (e,s,m,c))
    | x == "var" = eval (evalDec (e,s,m,c))
-   | otherwise = eval (eval (e,x:s,m,tail c))
+   | isDigit (head x) = eval (e,x:s,m,tail c)
+   | otherwise = (e,s,m,c)
     where x = head c
