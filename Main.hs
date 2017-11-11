@@ -60,7 +60,9 @@ parser = (env,[],m,[Ccom (parseString  "{ var x int := 10 ; \
                                        \{ if x = 10 then var x int := 1 else varB := 2 end;\
                                        \{ varA := varA + 1 ; x := x + 1 } } }")])
 
-parserFact = (env,[],m,[Ccom (parseString "while not (varD = 0) do varA := varA * varD ; varD := varD - 1 end")])
+parserFact = (env,[],m,[Ccom (parseString "{ var max int := 4 ; \
+                                          \{ var acc int := 1 ; while not max = 0 do \
+                                          \{ acc := acc * max ; max := max - 1 } end } }")])
 
 main = do
     {-
@@ -100,11 +102,9 @@ main = do
     pPrint (evalCMD whileCmd)
     -}
 
-    {-
     -- | Factorial
-    pPrint ("Factorial")
-    pPrint $ evalCMD (fact)
-    -}
+    pPrint $ "--- Factorial ---"
+    pPrint $ evalCMD (parserFact)
 
     {- | Generic Eval
     pPrint ("Generic eval")
@@ -130,7 +130,7 @@ main = do
     -}
 
     -- | Parser
+    pPrint $ "--- Declaration && Scope && Parsing ---"
     --pPrint $ evalCMD (parserIf)
     --pPrint $ evalCMD (parserWhile)
     pPrint $ evalCMD (parser)
-    --pPrint $ evalCMD (parserFact)
