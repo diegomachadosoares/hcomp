@@ -3,129 +3,128 @@ module Main where
 import qualified Data.Map as Map
 import qualified Data.Vector as V
 
+import Text.Pretty.Simple (pPrint)
+
 import Expressions
+import Syntax
 import Commands
-import ESMC
+import HelperTools
+import Parser
+--import ESMC
 
-a :: [String]
-a = ["10","20","20","30","20","50"]
-b = []
+m :: V.Vector Str
+m = V.fromList [ValueI 5, ValueI 10, ValueI 100]
 
-m :: V.Vector String
-m = V.fromList a
+env1 :: Map.Map String Bnd
+env1 = Map.insert "constA" (BndVal $ ValueI 1) Map.empty
+env2 = Map.insert "constB" (BndVal $ ValueI 2) env1
+env3 = Map.insert "varA" (BndLoc (Loc 0)) env2
+env4 = Map.insert "varB" (BndLoc (Loc 1)) env3
+env = Map.insert "varC" (BndLoc (Loc 2)) env4
 
-env1 :: Map.Map String (String,String)
-env1 = Map.insert "a" ("c","1") Map.empty
-env2 = Map.insert "b" ("v","0") env1
-env3 = Map.insert "c" ("v","1") env2
-env4 = Map.insert "d" ("c","4") env3
-env = Map.insert "e" ("v","2") env4
-
+{-
 -- | Expressions
-varExpr = (env,[],m,["a","b"])
-sumExpr = (env,[],m,["1","2","+"]) -- 3
-sumExpr1 = (env,[],m,["a","b","+"]) -- 3
-subExpr = (env,[],m,["1","2","-"]) -- 1
-subExpr1 = (env,[],m,["c","d","-"]) -- 1
-mulExpr = (env,[],m,["1","2","*"]) -- 2
-compExpr = (env,[],m,["1","2","+","6","3","-","*"]) -- 9
-compExpr2 = (env,[],m,["1","2","+","6","3","-","*","1","+"]) -- 10
+varExpr = (env,[],m,[Evar "varA", Evar "constA",Eq,Not])
+sumExpr = (env,[],m,[Evar "constA", Evar "varA", Add])
+subExpr = (env,[],m,[Evar "constA", Evar "constB", Sub])
+mulExpr = (env,[],m,[Evar "varA", Evar "varB", Mul])
+compExpr = (env,[],m,[Evar "varA", Evar "varB", Add, Evar "constA", Evar "constB", Mul, Add])
 
+-}
 -- | BooleanExpressions
-trueExpr = (env,[],m,["tt"])
-falseExpr = (env,[],m,["ff"])
-eqExpr = (env,[],m,["a","b","="])
-eqExpr1 = (env,[],m,["c","b","="])
-eqExpr2 = (env,[],m,["a","1","="])
-eqExpr3 = (env,[],m,["1","2","="])
-orExpr = (env,[],m,["tt","tt","or"])
-orExpr0 = (env,[],m,["tt","ff","or"])
-orExpr1 = (env,[],m,["ff","ff","or"])
-negExpr = (env,[],m,["tt","~"])
-negExpr1 = (env,[],m,["ff","~"])
+trueExpr = (env,[],m,[Cexp $ Not (EBool True)])
+falseExpr = (env,[],m,[Cexp $ Not (EBool False)])
+eqExpr = (env,[],m,[Cexp $ Not (Eq (Num 0) (Num 0))])
 
+{-
 -- | Commands
-nilCmd = (env,[],m,["nil"])
-attrCmd = (env,[],m,["2",":=","a","6",":=","b"])
-ifCmd = (env,[],m,["if","a","1","=","then","10",":=","c","else","2",":=","c","fimElse","200",":=","e"])
-ifCmd1 = (env,[],m,["if","e","6","=","then","1",":=","c","else","8",":=","c","fimElse"])
-whileCmd = (env,[],m,["while","e","0","=","~","do","e","1","-",":=","e","fimDo"])
 
-fact = (env,[],m,["4",":=","x","1",":=","y","while","x","0","=","~","do","x","y","*",":=","y","x","1","-",":=","x","fimDo"])
+nilCmd = (env,[],m,[Ccom Nill])
+ifCmd = (env,[],m,[Ccom (If [EBool True] [(Ccom (Attr "varA" [Num 100]))] [(Ccom (Attr "varA" [Num 1000]))])])
+ifNil = (env,[],m,[Ccom (If [EBool True] [Ccom Nill] [(Ccom (Attr "varA" [Num 1000]))])])
+whileCmd = (env,[],m,[(Ccom (Var "varD" "int" [Num 10]))
+                     ,(Ccom (While [(Evar "varD"),(Num 0),(Eq),Not]
+                     [(Ccom (Attr "varD" [(Evar "varD"),(Num 1),Sub]))]))])
+-}
+-- | Factorial
+fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3))),
+    (Ccom (While (Not (Eq (Evar "varD") (Num 0)))
+    [(Ccom (Attr "varA" (Mul (Evar "varA") (Evar "varD"))))
+    ,(Ccom (Attr "varD" (Sub (Evar "varD") (Num 1))))]))])
 
-
--- | Declaration
-dec = (env, [], m, ["var", "int", "100", ":=", "x"])
-decIF = (env,[], m, ["const", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
-decIFVar = (env,[], m, ["var", "int", "if", "tt", "then", "10", "else", "1", "fimElse", "x"])
-decIFN = (env,[], m, ["const", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
-decIFNVar = (env,[], m, ["var", "int", "if", "ff", "then", "10", "else", "19", "fimElse", "x"])
-decCMD = (env, [], m, ["var", "int", "100", ":=", "x","if","tt","then","var", "int", "1", ":=", "k", "1", "k","+", ":=", "k","else","nil","fimElse","2","x","+",":=","c"])
-decNCMD = (env, [], m, ["var", "int", "100", ":=", "x","if","ff","then","nil","else","var", "int", "1", ":=", "k", "1", "k","+", ":=", "k","nil","fimElse","2","x","+",":=","c"])
+-- | Parser
+parserIf = (env,[],m,[Ccom (parseString "if varA = 5 then varA := 10 else varA := 2")])
+parserWhile = (env,[],m,[Ccom (parseString "while (not (varA = 10)) do varA := varA + 1")])
+parser = (env,[],m,[Ccom (parseString "{ if 2 = 2 then varA := 1 else varA := 2 end; { varA := 15 ; varA := 7 } }")])
 
 main = do
-    {- | Expressions Tests
-    print("Expressions")
-    print (evalExp varExpr)
-    print (evalExp sumExpr)
-    print (evalExp sumExpr1)
-    print (evalExp subExpr)
-    print (evalExp subExpr1)
-    print (evalExp mulExpr)
-    print (evalExp compExpr)
-    print (evalExp compExpr2)
+    {-
+    -- | Expressions Tests
+    pPrint("Expressions")
+    pPrint $ filterS $ evalExp varExpr
+    pPrint $ filterS $ evalExp sumExpr
+    pPrint $ filterS $ evalExp subExpr
+    pPrint $ filterS $ evalExp mulExpr
+    pPrint $ filterS $ evalExp compExpr
     -}
 
-    {- | Boolean Expressions Test
-    print ("Boolean Expressions")
-    print (evalExp trueExpr)
-    print (evalExp falseExpr)
-    print (evalExp eqExpr)
-    print (evalExp eqExpr1)
-    print (evalExp eqExpr2)
-    print (evalExp eqExpr3)
-    print (evalExp orExpr)
-    print (evalExp orExpr0)
-    print (evalExp orExpr1)
-    print (evalExp negExpr)
-    print (evalExp negExpr1)
+    {-
+    -- | Boolean Expressions Test
+    pPrint $ "Boolean Expressions"
+    pPrint $ evalExp trueExpr
+    pPrint $ evalExp falseExpr
+    pPrint (evalExp eqExpr)
+    pPrint (evalExp eqExpr1)
+    pPrint (evalExp eqExpr2)
+    pPrint (evalExp eqExpr3)
+    pPrint (evalExp orExpr)
+    pPrint (evalExp orExpr0)
+    pPrint (evalExp orExpr1)
+    pPrint (evalExp negExpr)
+    pPrint (evalExp negExpr1)
     -}
 
-    {- | Commands
-    print ("Commands")
-    print (evalCMD nilCmd)
-    print (evalCMD attrCmd)
-    print (evalCMD ifCmd)
-    print (evalCMD ifCmd1)
-    print (evalCMD whileCmd)
+    {-
+    -- | Commands
+    pPrint ("Commands")
+    pPrint $ evalCMD nilCmd
+    pPrint (evalCMD attrCmd)
+    pPrint (evalCMD ifCmd)
+    pPrint (evalCMD whileCmd)
+    pPrint (evalCMD ifCmd1)
+    pPrint (evalCMD whileCmd)
     -}
 
-    {- | Factorial
-    print ("Factorial")
-    print (evalCMD fact)
+    {-
+    -- | Factorial
+    pPrint ("Factorial")
+    pPrint $ evalCMD (fact)
     -}
 
     {- | Generic Eval
-    print ("Generic eval")
-    print (eval varExpr)
-    print (eval sumExpr)
-    print (eval trueExpr)
-    print (eval eqExpr1)
-    print (eval negExpr)
-    print (eval attrCmd)
-    print (eval ifCmd)
-    print (eval whileCmd)
+    pPrint ("Generic eval")
+    pPrint (eval varExpr)
+    pPrint (eval sumExpr)
+    pPrint (eval trueExpr)
+    pPrint (eval eqExpr1)
+    pPrint (eval negExpr)
+    pPrint (eval attrCmd)
+    pPrint (eval ifCmd)
+    pPrint (eval whileCmd)
     -}
-    {-
-    print (eval dec)
-    print ("---")
-    print (eval decIF)
-    print ("---")
-    print (eval decIFVar)
-    print ("---")
-    print (eval decIFN)
-    print ("---")
-    print (eval decIFNVar)
-    print (eval decCMD)
+
+   {- pPrint (eval dec)
+    pPrint ("---")
+    pPrint (eval decIF)
+    pPrint ("---")
+    pPrint (eval decIFVar)
+    pPrint ("---")
+    pPrint (eval decIFN)
+    pPrint ("---")
+    pPrint (eval decIFNVar)
     -}
-    print (eval decNCMD)
+
+    -- | Parser
+    --pPrint $ evalCMD (parserIf)
+    --pPrint $ evalCMD (parserWhile)
+    pPrint $ evalCMD (parser)

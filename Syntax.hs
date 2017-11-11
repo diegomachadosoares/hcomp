@@ -4,71 +4,64 @@ module Syntax where
 import qualified Data.Map as Map
 import qualified Data.Vector as V
 
-type E = Map.Map String (String,String)
-type S = [String]
-type M = V.Vector String
-type C = [String]
+type E = Map.Map String Bnd
+type S = [Value]
+type M = V.Vector Str
+type C = [Contr]
+type Cexp = [Exp]
 
 -- | Memory Address of the variables
-newtype Loc = Loc Int
+data Loc = Loc Int
     deriving (Show,Eq)
 
 -- | Variable and Constant Values
-newtype Value = Value Int
+data Str = ValueI Int | ValueB Bool
     deriving (Show,Eq)
 
 -- | Environment recipient to hold constant values and variable addresses
-data EnvVal =
-  EnvLoc Loc
-  | EnvVal Value
+data Bnd =
+  BndLoc Loc
+  | BndVal Str
   deriving (Show,Eq)
 
-newtype PIdent =
-  PIdent ((Int,Int),String)
-  deriving(Eq,Ord,Show)
+data Value = ValI Int | ValB Bool | Com
+  deriving (Show,Eq)
 
-data Decl =
-  Dec Type PIdent
-  deriving(Eq,Ord,Show)
+data Contr = Ccom Com | Cexp Exp | Cvar String | CBool Bool
+        |ADD
+        |SUB
+        |MUL
+        |EQU
+        |NOT
+        |OR
 
-data Block =
-    BlockC Com
-  | BlockB [Com]
-  deriving(Eq,Ord,Show)
+  deriving (Show,Eq)
 
 data Com =
-    CDec Decl
-  | While Exp Block
-  | If Exp Block
-  | IfElse Exp Block Block
-  | Return Exp
-  deriving(Eq,Ord,Show)
+    While Exp [Contr]
+  | If Exp [Contr] [Contr]
+  | Attr String Exp
+  | Var String String Exp
+  | Const String String Exp
+  | Sequence Com Com
+  | Nill
+  deriving(Eq,Show)
 
 data Exp =
-   Num Int
- | Atr PIdent Exp
+   Num Integer
  | Or Exp Exp
- | And Exp Exp
  | Eq Exp Exp
- | Neq Exp Exp
  | Lt Exp Exp
  | Gt Exp Exp
  | Add Exp Exp
  | Sub Exp Exp
  | Mul Exp Exp
  | Div Exp Exp
- | Neg Exp
+ | Not Exp
  | NegInt Exp
  | Int Integer
- | Bool BoolT
+ | EBool Bool
+ | Evar String
+ | IfExp Exp Exp Exp
+ | Null
   deriving (Eq,Ord,Show)
-
-data BoolT =
-    ETrue
-  | EFalse
-  deriving(Eq,Ord,Show)
-
-data Type =
-    TInt
-  | TBool
-  deriving(Eq,Ord,Show)
