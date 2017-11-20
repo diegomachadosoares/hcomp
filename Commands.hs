@@ -10,28 +10,29 @@ import HelperTools
 import Expressions
 import Declaration
 
-evalCMD :: (E, S, M, C) -> (E, S, M, C)
+evalCMD :: (E, S, M, C, O) -> (E, S, M, C, O)
 
-evalCMD (e,s,m,[]) = (e,s,m,[])
+evalCMD (e,s,m,[],o) = (e,s,m,[],o)
 
-evalCMD (e,s,m,(Ccom Nill):c) = evalCMD (e,s,m,c)
+evalCMD (e,s,m,(Ccom Nill):c,o) = evalCMD (e,s,m,c,0)
 
-evalCMD (e,s,m,(Ccom (If exp a b)):c)
-    | x = evalCMD (e,filterS (evalCMD (e,s,m,a)),filterM (evalCMD (e,s,m,a)),c)
-    | otherwise = evalCMD (e,filterS (evalCMD (e,s,m,b)),filterM (evalCMD (e,s,m,b)),c)
-    where x = rBVal(head (filterS (evalExp(e,s,m,[(Cexp exp)]))))
+evalCMD (e,s,m,(Ccom (If exp a b)):c,o)
+    | x = evalCMD (e,filterS (evalCMD (e,s,m,a)),filterM (evalCMD (e,s,m,a)),c,o)
+    | otherwise = evalCMD (e,filterS (evalCMD (e,s,m,b)),filterM (evalCMD (e,s,m,b)),c,o)
+    where x = rBVal(head (filterS (evalExp(e,s,m,[(Cexp exp)],o))))
 
 evalCMD (e,s,m,(Ccom (While exp a)):c)
-    | x  = evalCMD(e,filterS (evalCMD(e,s,m,a)),filterM (evalCMD(e,s,m,a)),(Ccom (While exp a)):c)
-    | otherwise = evalCMD(e,s,m,c)
-    where x = rBVal (head (filterS (evalExp(e,s,m,[(Cexp exp)]))))
+    | x  = evalCMD(e,filterS (evalCMD(e,s,m,a,o)),filterM (evalCMD(e,s,m,a,o)),(Ccom (While exp a)):c,o)
+    | otherwise = evalCMD(e,s,m,c,o)
+    where x = rBVal (head (filterS (evalExp(e,s,m,[(Cexp exp)],o))))
 
-evalCMD (e,s,m,(Ccom (Attr a exp)):c)
-    | x == BndLoc (Loc (-1)) = (e,s,m,c)
-    | otherwise = evalCMD (e,s,(m V.// [(rBnd x, convValStr(head (filterS (evalExp (e,s,m,[(Cexp exp)])))))]),c)
+evalCMD (e,s,m,(Ccom (Attr a exp)):c,o)
+    | x == BndLoc (Loc (-1)) = (e,s,m,c,o)
+    | otherwise = evalCMD (e,s,(m V.// [(rBnd x, convValStr(head (filterS (evalExp (e,s,m,[(Cexp exp)],o)))))]),c,o)
     where x = Map.findWithDefault (BndLoc $ Loc (-1)) a e
 
-evalCMD (e,s,m,(Ccom (Var a b exp)):c) = evalCMD (evalDec(e,s,m,(Ccom (Var a b exp)):c))
-evalCMD (e,s,m,(Ccom (Const a b exp)):c) = evalCMD (evalDec(e,s,m,(Ccom (Const a b exp)):c))
-evalCMD (e,s,m,(Ccom (Sequence a b)):c) = evalCMD (e,s,m,(Ccom a):(Ccom b):c)
-evalCMD (e,s,m,c) = (e,s,m,c)
+evalCMD (e,s,m,(Ccom (Var a b exp)):c,o) = evalCMD (evalDec(e,s,m,(Ccom (Var a b exp)):c,o))
+evalCMD (e,s,m,(Ccom (Const a b exp)):c,o) = evalCMD (evalDec(e,s,m,(Ccom (Const a b exp)):c,o))
+evalCMD (e,s,m,(Ccom (Sequence a b)):c,o) = evalCMD (e,s,m,(Ccom a):(Ccom b):c,o)
+evalCMD (e,s,m,(Ccom (Print exp)):c,o) = evalCMD (e,s,m,c,head(filterS (evalExp(e,s,m,[(Cexp exp)],o))):o)
+evalCMD (e,s,m,c,o) = (e,s,m,c,o)

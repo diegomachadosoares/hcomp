@@ -9,6 +9,8 @@ type S = [Value]
 type M = V.Vector Str
 type C = [Contr]
 type Cexp = [Exp]
+type O = [Value]
+type F = [String]
 
 -- | Memory Address of the variables
 data Loc = Loc Int
@@ -22,6 +24,7 @@ data Str = ValueI Int | ValueB Bool
 data Bnd =
   BndLoc Loc
   | BndVal Str
+  | BndAbs (F,Com)
   deriving (Show,Eq)
 
 data Value = ValI Int | ValB Bool | Com
@@ -38,12 +41,15 @@ data Contr = Ccom Com | Cexp Exp | Cvar String | CBool Bool
   deriving (Show,Eq)
 
 data Com =
-    While Exp [Contr]
-  | If Exp [Contr] [Contr]
+    While Exp Com
+  | If Exp Com Com
   | Attr String Exp
   | Var String String Exp
   | Const String String Exp
   | Sequence Com Com
+  | Print Exp
+  | Proc F Com
+  | ProcR F Com
   | Nill
   deriving(Eq,Show)
 
