@@ -6,8 +6,11 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Expr
 import Text.ParserCombinators.Parsec.Language
 import qualified Text.ParserCombinators.Parsec.Token as Token
+import qualified Data.Map as Map
+import qualified Data.Vector as V
 
 import Syntax
+import Commands
 
 {-
 data BExpr = BoolConst Bool
@@ -209,9 +212,21 @@ parseString str =
     Left e  -> error $ show e
     Right r -> r
 
-parseFile :: String -> IO Com
+m :: V.Vector Str
+m = V.fromList [ValueI 5, ValueI 10, ValueI 100]
+
+env1 :: Map.Map String Bnd
+env1 = Map.insert "constA" (BndVal $ ValueI 1) Map.empty
+env2 = Map.insert "constB" (BndVal $ ValueI 2) env1
+env3 = Map.insert "varA" (BndLoc (Loc 0)) env2
+env4 = Map.insert "varB" (BndLoc (Loc 1)) env3
+e = Map.insert "varC" (BndLoc (Loc 2)) env4
+
+s = []
+
+parseFile :: String -> IO (E,S,M,C)
 parseFile file =
   do program  <- readFile file
      case parse whileParser "" program of
        Left e  -> print e >> fail "parse error"
-       Right r -> return r
+       Right r -> return $ evalCMD (e,s,m,[Ccom r])

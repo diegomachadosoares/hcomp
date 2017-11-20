@@ -11,7 +11,7 @@ import Commands
 import HelperTools
 import Parser
 --import ESMC
-
+{-
 m :: V.Vector Str
 m = V.fromList [ValueI 5, ValueI 10, ValueI 100]
 
@@ -64,6 +64,9 @@ parserFact = (env,[],m,[Ccom (parseString "{ var max int := 4 ; \
                                           \{ var acc int := 1 ; while not max = 0 do \
                                           \{ acc := acc * max ; max := max - 1 } end } }")])
 
+parserFromFile = (env,[],m,[Ccom (parseFile "program.l")])
+
+-}
 main = do
     {-
     -- | Expressions Tests
@@ -103,8 +106,8 @@ main = do
     -}
 
     -- | Factorial
-    pPrint $ "--- Factorial ---"
-    pPrint $ evalCMD (parserFact)
+    --pPrint $ "--- Factorial ---"
+    --pPrint $ evalCMD (parserFact)
 
     {- | Generic Eval
     pPrint ("Generic eval")
@@ -130,7 +133,8 @@ main = do
     -}
 
     -- | Parser
-    pPrint $ "--- Declaration && Scope && Parsing ---"
+    --pPrint $ "--- Declaration && Scope && Parsing ---"
     --pPrint $ evalCMD (parserIf)
     --pPrint $ evalCMD (parserWhile)
-    pPrint $ evalCMD (parser)
+    --pPrint $ evalCMD (parser)
+    parseFile "program.l"
