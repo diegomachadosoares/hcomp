@@ -14,14 +14,14 @@ evalCMD :: (E, S, M, C, O) -> (E, S, M, C, O)
 
 evalCMD (e,s,m,[],o) = (e,s,m,[],o)
 
-evalCMD (e,s,m,(Ccom Nill):c,o) = evalCMD (e,s,m,c,0)
+evalCMD (e,s,m,(Ccom Nill):c,o) = evalCMD (e,s,m,c,o)
 
 evalCMD (e,s,m,(Ccom (If exp a b)):c,o)
-    | x = evalCMD (e,filterS (evalCMD (e,s,m,a)),filterM (evalCMD (e,s,m,a)),c,o)
-    | otherwise = evalCMD (e,filterS (evalCMD (e,s,m,b)),filterM (evalCMD (e,s,m,b)),c,o)
+    | x = evalCMD (e,filterS (evalCMD (e,s,m,a,o)),filterM (evalCMD (e,s,m,a,o)),c,o)
+    | otherwise = evalCMD (e,filterS (evalCMD (e,s,m,b,o)),filterM (evalCMD (e,s,m,b,o)),c,o)
     where x = rBVal(head (filterS (evalExp(e,s,m,[(Cexp exp)],o))))
 
-evalCMD (e,s,m,(Ccom (While exp a)):c)
+evalCMD (e,s,m,(Ccom (While exp a)):c,o)
     | x  = evalCMD(e,filterS (evalCMD(e,s,m,a,o)),filterM (evalCMD(e,s,m,a,o)),(Ccom (While exp a)):c,o)
     | otherwise = evalCMD(e,s,m,c,o)
     where x = rBVal (head (filterS (evalExp(e,s,m,[(Cexp exp)],o))))

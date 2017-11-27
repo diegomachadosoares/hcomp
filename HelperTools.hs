@@ -2,14 +2,14 @@ module HelperTools where
 import Syntax
 
 
-filterE :: (a,b,c,d) -> (a)
-filterE (e,_,_,_) = (e)
+filterE :: (a,b,c,d,o) -> (a)
+filterE (e,_,_,_,_) = (e)
 
-filterS :: (a,b,c,d) -> (b)
-filterS (_,s,_,_) = (s)
+filterS :: (a,b,c,d,o) -> (b)
+filterS (_,s,_,_,_) = (s)
 
-filterM :: (a,b,c,d) -> (c)
-filterM (_,_,m,_) = (m)
+filterM :: (a,b,c,d,o) -> (c)
+filterM (_,_,m,_,_) = (m)
 
 convertLoc :: Loc -> Int
 convertLoc (Loc a) = a

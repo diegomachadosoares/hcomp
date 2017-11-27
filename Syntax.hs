@@ -41,8 +41,8 @@ data Contr = Ccom Com | Cexp Exp | Cvar String | CBool Bool
   deriving (Show,Eq)
 
 data Com =
-    While Exp Com
-  | If Exp Com Com
+    While Exp [Contr]
+  | If Exp [Contr] [Contr]
   | Attr String Exp
   | Var String String Exp
   | Const String String Exp

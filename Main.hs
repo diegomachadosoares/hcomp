@@ -55,7 +55,7 @@ fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3))),
 -- | Parser
 parserIf = (env,[],m,[Ccom (parseString "if varA = 5 then varA := 10 else varA := 2")])
 parserWhile = (env,[],m,[Ccom (parseString "while (not (varA = 10)) do varA := varA + 1")])
-parser = (env,[],m,[Ccom (parseString "{ if 2 = 2 then varA := 1 else varA := 2 end; { varA := 15 ; varA := 7 } }")])
+parser = (env,[],m,[Ccom (parseString "{ if 2 = 2 then varA := 1 else varA := 2 end; { varA := 15 ; varA := 7 } }")],[])
 
 main = do
     {-
