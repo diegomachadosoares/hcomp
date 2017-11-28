@@ -60,6 +60,9 @@ languageDef =
                                     , "int"
                                     , "bool"
                                     , "end"
+                                    , "proc"
+                                    , "("
+                                    , ")"
                                     , ";"]
         , Token.reservedOpNames =   ["+", "-", "*", "/", ":="
                                     , "<", ">", "and", "or", "not","="
@@ -163,6 +166,39 @@ constIStmt =
         reserved ":="
         expr <- aExpression
         return $ Const var "int" expr
+
+decProc :: Parser Com
+decProc =
+    do  reserved "proc"
+        name <- identifier
+        reserved "("
+        form <-forms
+        reserved ")"
+        reserved "{"
+        stmt <- statement
+        reserved "}"
+        return $ ProcR name form [Ccom stmt]
+
+formsI :: Parser [String]
+formsI =
+    do  var <- identifier
+        reserved ":T"
+        reserved "int"
+        reserved ","
+        f <- forms
+        return $ var:f
+
+formsB :: Parser [String]
+formsB =
+    do  var <- identifier
+        reserved ":T"
+        reserved "bool"
+        reserved ","
+        f <- forms
+        return $ var:f
+
+forms = formsI <|> formsB
+
 
 aExpression :: Parser Exp
 aExpression = buildExpressionParser aOperators aTerm

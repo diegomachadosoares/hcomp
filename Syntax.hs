@@ -11,6 +11,7 @@ type C = [Contr]
 type Cexp = [Exp]
 type O = [Value]
 type F = [String]
+type A = [Exp]
 
 -- | Memory Address of the variables
 data Loc = Loc Int
@@ -24,7 +25,7 @@ data Str = ValueI Int | ValueB Bool
 data Bnd =
   BndLoc Loc
   | BndVal Str
-  | BndAbs (F,Com)
+  | BndAbs (F,[Contr])
   deriving (Show,Eq)
 
 data Value = ValI Int | ValB Bool | Com
@@ -48,9 +49,11 @@ data Com =
   | Const String String Exp
   | Sequence Com Com
   | Print Exp
-  | Proc F Com
-  | ProcR F Com
+  | Proc String F Com
+  | ProcR String F [Contr]
+  | ProcA String A
   | Nill
+  | Exit Exp
   deriving(Eq,Show)
 
 data Exp =
