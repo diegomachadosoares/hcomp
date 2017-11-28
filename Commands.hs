@@ -55,4 +55,5 @@ evalDec (e,s,m,(Ccom (Const a b d)):c,o) = (Map.insert a (convValBnd(head (filte
 evalDec (e,s,m,(Ccom (ProcR id f bl)):c,o) = (Map.insert id (BndAbs (f,(Ccom (ProcR id f bl)):bl)) e,s,m,c,o)
 evalDec (e,s,m,c,o) = (e,s,m,c,o)
 
-free (e,s,m,c,o) = (e,s,m,c,o)
+free :: (E, S, M, C, O) -> (E, S, M, C, O)
+free (e,s,m,c,o) = (e,s,V.init m,c,o)
