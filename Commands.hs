@@ -33,6 +33,7 @@ evalCMD (e,s,m,(Ccom (Sequence a b)):c,o) = evalCMD (e,s,m,(Ccom a):(Ccom b):c,o
 evalCMD (e,s,m,(Ccom (Print exp)):c,o) = evalCMD (e,s,m,c,head(filterS (evalExp(e,s,m,[(Cexp exp)],o))):o)
 evalCMD (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[(Ccom (Exit a))],o)
 evalCMD (e,s,m,(Ccom(ProcA a b)):c,o) = evalCall (e,s,m,(Ccom(ProcA a b)):c,o)
+evalCMD (e,s,m,(Ccom(FunA a b)):c,o) = evalFun (e,s,m,(Ccom(FunA a b)):c,o)
 evalCMD (e,s,m,c,o) = (e,s,m,c,o)
 
 -- | Expreções declarativas
@@ -54,6 +55,7 @@ evalDec (e,s,m,[],o) = (e,s,m,[],o)
 evalDec (e,s,m,(Ccom (Var a b d)):c,o) = free (evalCMD (((Map.insert a (BndLoc (Loc ( V.length m)))) e),s,m V.++ (V.singleton (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o)))))),c,o))
 evalDec (e,s,m,(Ccom (Const a b d)):c,o) = (Map.insert a (convValBnd(head (filterS (evalDecExp(e,s,m,[Cexp d],o))))) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (ProcR id f bl)):c,o) = (Map.insert id (BndAbs (f,(Ccom (ProcR id f bl)):bl)) e,s,m,c,o)
+evalDec (e,s,m,(Ccom (Func id f exp)):c,o) = (Map.insert id (BndAbsF (f,exp)) e,s,m,c,o)
 evalDec (e,s,m,c,o) = (e,s,m,c,o)
 
 -- | Desalocação de memoria
@@ -66,7 +68,7 @@ evalProg (e,s,m,[],o) = (e,s,m,[],o)
 evalProg (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[],(ValI a):o)
 evalProg (e,s,m,c,o) = evalProg(evalCMD(e,s,m,c,o))
 
--- | Chamada de funçoes
+-- | Chamada de procedimentos
 evalCall :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalCall (e,s,m,(Ccom(ProcA a exps)):c,o) = evalCall (e,s,m,(rev1 (ctr exps))++((CALL a):c),o)
 evalCall (e,s,m,(Cexp a):c,o) = evalCall ( evalExp (e,s,m,(Cexp a):c,o) )
@@ -76,3 +78,9 @@ evalCall (e,s,m,(CALL a):c,o) = (e,(snd (snd (add ((fst (rAbs (Map.findWithDefau
 add:: (F,([Contr],S)) -> (F,([Contr],S))
 add ([],(c,s)) = ([],(c,s))
 add (a:ids,(c,s)) = add (ids,((Ccom (Var a "int" (Num (fromIntegral(rIVal (head s)))))):c,tail s))
+
+-- | Chamada de Funções
+evalFun :: (E, S, M, C, O) -> (E, S, M, C, O)
+evalFun (e,s,m,(Ccom(FunA a exps)):c,o) = evalCall (e,s,m,(rev1 (ctr exps))++((CALL a):c),o)
+evalFun (e,s,m,(Cexp a):c,o) = evalCall ( evalExp (e,s,m,(Cexp a):c,o) )
+evalFun (e,s,m,(CALL a):c,o) = evalExp (e,(snd (snd (add ((fst (rAbsF (Map.findWithDefault (BndAbsF ([],Num 0)) a e))) ,([],s))))),m,(fst (snd (add ((fst (rAbsF (Map.findWithDefault (BndAbsF ([],Num 0)) a e))) ,([],s)))))++((Cexp (snd (rAbsF (Map.findWithDefault (BndAbsF ([],Num 0)) a e))):c)),o)

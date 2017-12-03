@@ -26,6 +26,7 @@ data Bnd =
   BndLoc Loc
   | BndVal Str
   | BndAbs (F,[Contr])
+  | BndAbsF (F,Exp)
   deriving (Show,Eq)
 
 data Value = ValI Int | ValB Bool | Com
@@ -52,6 +53,8 @@ data Com =
   | Print Exp
   | ProcR String F [Contr]
   | ProcA String A
+  | Func String F Exp
+  | FunA String A
   | Nill
   | Exit Int
   deriving(Eq,Show)

@@ -49,6 +49,10 @@ rBnd (BndLoc (Loc a)) = a
 rAbs :: Bnd -> (F,[Contr])
 rAbs (BndAbs (a,b)) = (a,b)
 
+rAbsF :: Bnd -> (F,Exp)
+rAbsF (BndAbsF (a,b)) = (a,b)
+
+
 rIVal :: Value -> Int
 rIVal (ValI a) = a
 
