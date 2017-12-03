@@ -10,11 +10,8 @@ import HelperTools
 import Expressions
 
 evalCMD :: (E, S, M, C, O) -> (E, S, M, C, O)
-
 evalCMD (e,s,m,[],o) = (e,s,m,[],o)
-
 evalCMD (e,s,m,(Ccom Nill):c,o) = evalCMD (e,s,m,c,o)
-
 evalCMD (e,s,m,(Ccom (If exp a b)):c,o)
     | x = evalCMD (e,filterS (evalCMD (e,s,m,a,o)),filterM (evalCMD (e,s,m,a,o)),c,o)
     | otherwise = evalCMD (e,filterS (evalCMD (e,s,m,b,o)),filterM (evalCMD (e,s,m,b,o)),c,o)
@@ -35,8 +32,10 @@ evalCMD (e,s,m,(Ccom (Const a b exp)):c,o) = evalCMD (evalDec(e,s,m,(Ccom (Const
 evalCMD (e,s,m,(Ccom (Sequence a b)):c,o) = evalCMD (e,s,m,(Ccom a):(Ccom b):c,o)
 evalCMD (e,s,m,(Ccom (Print exp)):c,o) = evalCMD (e,s,m,c,head(filterS (evalExp(e,s,m,[(Cexp exp)],o))):o)
 evalCMD (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[(Ccom (Exit a))],o)
+evalCMD (e,s,m,(Ccom(ProcA a b)):c,o) = evalCall (e,s,m,(Ccom(ProcA a b)):c,o)
 evalCMD (e,s,m,c,o) = (e,s,m,c,o)
 
+-- | Expreções declarativas
 evalDecExp :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalDecExp (e,s,m,[],o) = (e,s,m,[],o)
 evalDecExp (e,s,m,(Cexp (IfExp a b d)):c,o)= evalExpIF (e,s,m,(Cexp (IfExp a b d)):c,o)
@@ -49,6 +48,7 @@ evalExpIF (e,s,m,(Cexp (IfExp a b d)):c,o)
     where x = rBVal (head (filterS (evalExp(e,s,m,[Cexp a],o))))
           v = filterS (evalExp(e,s,m,[Cexp b],o))
 
+-- | Declarações
 evalDec :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalDec (e,s,m,[],o) = (e,s,m,[],o)
 evalDec (e,s,m,(Ccom (Var a b d)):c,o) = free (evalCMD (((Map.insert a (BndLoc (Loc ( V.length m)))) e),s,m V.++ (V.singleton (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o)))))),c,o))
@@ -56,10 +56,17 @@ evalDec (e,s,m,(Ccom (Const a b d)):c,o) = (Map.insert a (convValBnd(head (filte
 evalDec (e,s,m,(Ccom (ProcR id f bl)):c,o) = (Map.insert id (BndAbs (f,(Ccom (ProcR id f bl)):bl)) e,s,m,c,o)
 evalDec (e,s,m,c,o) = (e,s,m,c,o)
 
+-- | Desalocação de memoria
 free :: (E, S, M, C, O) -> (E, S, M, C, O)
 free (e,s,m,c,o) = (e,s,V.init m,c,o)
 
+-- | Eval Genérico
 evalProg :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalProg (e,s,m,[],o) = (e,s,m,[],o)
 evalProg (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[],(ValI a):o)
 evalProg (e,s,m,c,o) = evalProg(evalCMD(e,s,m,c,o))
+
+-- | Chamada de funçoes
+evalCall :: (E, S, M, C, O) -> (E, S, M, C, O)
+evalCall (e,s,m,(Ccom(ProcA a exps)):c,o) = evalCall (e,s,m,(ctr exps)++((CALL a):c),o)
+evalCall (e,s,m,(Cexp a):c,o) = evalCall ( evalExp (e,s,m,(Cexp a):c,o) )

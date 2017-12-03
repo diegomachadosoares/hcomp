@@ -38,6 +38,7 @@ data Contr = Ccom Com | Cexp Exp | Cvar String | CBool Bool
         |EQU
         |NOT
         |OR
+        |CALL String
 
   deriving (Show,Eq)
 
@@ -49,7 +50,6 @@ data Com =
   | Const String String Exp
   | Sequence Com Com
   | Print Exp
-  | Proc String F Com
   | ProcR String F [Contr]
   | ProcA String A
   | Nill
