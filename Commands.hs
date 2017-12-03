@@ -34,6 +34,7 @@ evalCMD (e,s,m,(Ccom (Var a b exp)):c,o) = evalCMD (evalDec(e,s,m,(Ccom (Var a b
 evalCMD (e,s,m,(Ccom (Const a b exp)):c,o) = evalCMD (evalDec(e,s,m,(Ccom (Const a b exp)):c,o))
 evalCMD (e,s,m,(Ccom (Sequence a b)):c,o) = evalCMD (e,s,m,(Ccom a):(Ccom b):c,o)
 evalCMD (e,s,m,(Ccom (Print exp)):c,o) = evalCMD (e,s,m,c,head(filterS (evalExp(e,s,m,[(Cexp exp)],o))):o)
+evalCMD (e,s,m,(Ccom Break):c,o) = (Map.empty,[],V.empty,[(Ccom Break)],o)
 evalCMD (e,s,m,c,o) = (e,s,m,c,o)
 
 evalDecExp :: (E, S, M, C, O) -> (E, S, M, C, O)
@@ -57,3 +58,9 @@ evalDec (e,s,m,c,o) = (e,s,m,c,o)
 
 free :: (E, S, M, C, O) -> (E, S, M, C, O)
 free (e,s,m,c,o) = (e,s,V.init m,c,o)
+
+evalProg :: (E, S, M, C, O) -> (E, S, M, C, O)
+evalProg (e,s,m,[],o) = (e,s,m,[],o)
+evalProg (e,s,m,h:c,o)
+    | h == (Ccom Break) = (Map.empty,[],V.empty,[],o)
+    | otherwise = evalProg(evalCMD(e,s,m,h:c,o))

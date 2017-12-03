@@ -54,6 +54,7 @@ data Com =
   | ProcA String A
   | Nill
   | Exit Exp
+  | Break
   deriving(Eq,Show)
 
 data Exp =
