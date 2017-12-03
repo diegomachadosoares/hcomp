@@ -53,8 +53,7 @@ data Com =
   | ProcR String F [Contr]
   | ProcA String A
   | Nill
-  | Exit Exp
-  | Break
+  | Exit Int
   deriving(Eq,Show)
 
 data Exp =
