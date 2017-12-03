@@ -68,5 +68,11 @@ evalProg (e,s,m,c,o) = evalProg(evalCMD(e,s,m,c,o))
 
 -- | Chamada de funçoes
 evalCall :: (E, S, M, C, O) -> (E, S, M, C, O)
-evalCall (e,s,m,(Ccom(ProcA a exps)):c,o) = evalCall (e,s,m,(ctr exps)++((CALL a):c),o)
+evalCall (e,s,m,(Ccom(ProcA a exps)):c,o) = evalCall (e,s,m,(rev1 (ctr exps))++((CALL a):c),o)
 evalCall (e,s,m,(Cexp a):c,o) = evalCall ( evalExp (e,s,m,(Cexp a):c,o) )
+evalCall (e,s,m,(CALL a):c,o) = (e,(snd (snd (add ((fst (rAbs (Map.findWithDefault (BndAbs ([],[])) a e))) ,([],s))))),m,(fst (snd (add ((fst (rAbs (Map.findWithDefault (BndAbs ([],[])) a e))) ,([],s)))))++(snd (rAbs (Map.findWithDefault (BndAbs ([],[])) a e)))++c,o)
+
+-- | Declara as variaveis formais e consome os valores
+add:: (F,([Contr],S)) -> (F,([Contr],S))
+add ([],(c,s)) = ([],(c,s))
+add (a:ids,(c,s)) = add (ids,((Ccom (Var a "int" (Num (fromIntegral(rIVal (head s)))))):c,tail s))

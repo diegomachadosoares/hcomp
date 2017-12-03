@@ -46,6 +46,9 @@ getVal (Cexp (EBool a)) = ValB a
 rBnd :: Bnd -> Int
 rBnd (BndLoc (Loc a)) = a
 
+rAbs :: Bnd -> (F,[Contr])
+rAbs (BndAbs (a,b)) = (a,b)
+
 rIVal :: Value -> Int
 rIVal (ValI a) = a
 
@@ -62,3 +65,7 @@ isFalse _ = False
 
 ctr :: [Exp] -> [Contr]
 ctr (a:exps) = (Cexp a):(ctr (exps))
+
+rev1 :: [a] -> [a]
+rev1 [] = []
+rev1 (x:xs) = reverse xs ++ [x]
