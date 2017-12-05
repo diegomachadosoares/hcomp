@@ -104,6 +104,7 @@ statement' =   seqStmt
            <|> varIStmt
            <|> varBStmt
            <|> constIStmt
+           <|> decProc
 
 ifStmt :: Parser Com
 ifStmt =
