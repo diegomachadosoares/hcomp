@@ -14,6 +14,7 @@ import Parser
 
 m :: V.Vector Str
 m = V.fromList [ValueI 5, ValueI 10, ValueI 100]
+empty_M = V.fromList []
 
 env1 :: Map.Map String Bnd
 env1 = Map.insert "constA" (BndVal $ ValueI 1) Map.empty
@@ -21,6 +22,8 @@ env2 = Map.insert "constB" (BndVal $ ValueI 2) env1
 env3 = Map.insert "varA" (BndLoc (Loc 0)) env2
 env4 = Map.insert "varB" (BndLoc (Loc 1)) env3
 env = Map.insert "varC" (BndLoc (Loc 2)) env4
+empty_Env:: Map.Map String Bnd
+empty_Env = Map.empty
 
 {-
 -- | Expressions
@@ -50,13 +53,14 @@ whileCmd = (env,[],m,[(Ccom (Var "varD" "int" [Num 10]))
 fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3))),
     (Ccom (While (Not (Eq (Evar "varD") (Num 0)))
     [(Ccom (Attr "varA" (Mul (Evar "varA") (Evar "varD"))))
-    ,(Ccom (Attr "varD" (Sub (Evar "varD") (Num 1))))]))])
+    ,(Ccom (Attr "varD" (Sub (Evar "varD") (Num 1))))]))],[])
 
 -- | Parser
 parserIf = (env,[],m,[Ccom (parseString "if varA = 5 then varA := 10 else varA := 2")])
 parserWhile = (env,[],m,[Ccom (parseString "while (not (varA = 10)) do varA := varA + 1")])
 parser = (env,[],m,[Ccom (parseString "{ if 2 = 2 then varA := 1 else varA := 2 end; { varA := 15 ; varA := 7 } }")],[])
-pars = (env,[],m,[ ] ,[])
+pars = (empty_Env,[],empty_M,[Ccom (parseString " { proc soma ( a int , b int , ) { a := a + b } ; \
+                                                \ ")],[])
 
 main = do
     {-
@@ -128,4 +132,4 @@ main = do
     -- | Parser
     --pPrint $ evalCMD (parserIf)
     --pPrint $ evalCMD (parserWhile)
-    pPrint $ evalProg (parser)
+    pPrint $ evalProg (pars)

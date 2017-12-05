@@ -52,7 +52,7 @@ evalExpIF (e,s,m,(Cexp (IfExp a b d)):c,o)
 -- | Declarações
 evalDec :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalDec (e,s,m,[],o) = (e,s,m,[],o)
-evalDec (e,s,m,(Ccom (Var a b d)):c,o) = free (evalCMD (((Map.insert a (BndLoc (Loc ( V.length m)))) e),s,m V.++ (V.singleton (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o)))))),c,o))
+evalDec (e,s,m,(Ccom (Var a b d)):c,o) = (evalCMD (((Map.insert a (BndLoc (Loc ( V.length m)))) e),s,m V.++ (V.singleton (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o)))))),c,o))
 evalDec (e,s,m,(Ccom (Const a b d)):c,o) = (Map.insert a (convValBnd(head (filterS (evalDecExp(e,s,m,[Cexp d],o))))) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (ProcR id f bl)):c,o) = (Map.insert id (BndAbs (f,(Ccom (ProcR id f bl)):bl)) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (Func id f exp)):c,o) = (Map.insert id (BndAbsF (f,exp)) e,s,m,c,o)

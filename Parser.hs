@@ -240,7 +240,6 @@ explist =
 formsI :: Parser [String]
 formsI =
     do  var <- identifier
-        reserved ":T"
         reserved "int"
         reserved ","
         f <- forms
@@ -249,7 +248,6 @@ formsI =
 formsB :: Parser [String]
 formsB =
     do  var <- identifier
-        reserved ":T"
         reserved "bool"
         reserved ","
         f <- forms
