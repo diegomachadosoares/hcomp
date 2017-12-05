@@ -65,7 +65,7 @@ free (e,s,m,c,o) = (e,s,V.init m,c,o)
 -- | Eval Genérico
 evalProg :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalProg (e,s,m,[],o) = (e,s,m,[],o)
-evalProg (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[],(ValI a):o)
+evalProg (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[],(ValI (fromIntegral a)):o)
 evalProg (e,s,m,c,o) = evalProg(evalCMD(e,s,m,c,o))
 
 -- | Chamada de procedimentos

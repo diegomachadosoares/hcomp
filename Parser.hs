@@ -63,7 +63,10 @@ languageDef =
                                     , "proc"
                                     , "("
                                     , ")"
-                                    , ";"]
+                                    , ";"
+                                    , "print"
+                                    , "exit"
+                                    , "func"]
         , Token.reservedOpNames =   ["+", "-", "*", "/", ":="
                                     , "<", ">", "and", "or", "not","="
                                     ]
@@ -105,6 +108,11 @@ statement' =   seqStmt
            <|> varBStmt
            <|> constIStmt
            <|> decProc
+           <|> exitStmt
+           <|> printStmt
+           <|> callProc
+           <|> decFunc
+           <|> callFunc
 
 ifStmt :: Parser Com
 ifStmt =
@@ -180,6 +188,55 @@ decProc =
         reserved "}"
         return $ ProcR name form [Ccom stmt]
 
+callProc :: Parser Com
+callProc =
+    do  name <- identifier
+        reserved "("
+        exps <- explist
+        reserved ")"
+        return $ ProcA name exps
+
+decFunc :: Parser Com
+decFunc =
+    do  reserved "func"
+        name <- identifier
+        reserved "("
+        form <-forms
+        reserved ")"
+        reserved "{"
+        exp <- aExpression
+        reserved "}"
+        return $ Func name form exp
+
+callFunc :: Parser Com
+callFunc =
+    do  name <- identifier
+        reserved "("
+        exps <- explist
+        reserved ")"
+        return $ FunA name exps
+
+printStmt :: Parser Com
+printStmt =
+    do  reserved "print"
+        reserved "("
+        exp <- aExpression
+        reserved ")"
+        return $ Print exp
+
+exitStmt :: Parser Com
+exitStmt =
+    do  reserved "exit"
+        number <- integer
+        return $ Exit number
+
+explist :: Parser [Exp]
+explist =
+    do  exp <- aExpression
+        reserved ","
+        f <- expA
+        return $ exp:f
+
 formsI :: Parser [String]
 formsI =
     do  var <- identifier
@@ -198,7 +255,16 @@ formsB =
         f <- forms
         return $ var:f
 
-forms = formsI <|> formsB
+formsN :: Parser [String]
+formsN =
+    do return ([])
+
+expN :: Parser [Exp]
+expN =
+    do return ([])
+
+forms = formsI <|> formsB <|> formsN
+expA = explist <|> expN
 
 
 aExpression :: Parser Exp
