@@ -66,7 +66,8 @@ languageDef =
                                     , ";"
                                     , "print"
                                     , "exit"
-                                    , "func"]
+                                    , "func"
+                                    , "call"]
         , Token.reservedOpNames =   ["+", "-", "*", "/", ":="
                                     , "<", ">", "and", "or", "not","="
                                     ]
@@ -122,7 +123,7 @@ ifStmt =
         stmt1 <- statement
         reserved "else"
         stmt2 <- statement
-        reserved "end"
+        reserved "endIF"
         return $ If cond [Ccom stmt1] [Ccom stmt2]
 
 whileStmt :: Parser Com
@@ -131,7 +132,7 @@ whileStmt =
         cond <- aExpression
         reserved "do"
         stmt <- statement
-        reserved "end"
+        reserved "endWhile"
         return $ While cond [Ccom stmt]
 
 assignStmt :: Parser Com
@@ -145,7 +146,9 @@ seqStmt :: Parser Com
 seqStmt =
     do  reserved "{"
         stmt1 <- statement
+        reserved "}"
         reserved ";"
+        reserved "{"
         stmt2 <- statement
         reserved "}"
         return $ Sequence stmt1 stmt2
@@ -183,14 +186,15 @@ decProc =
         reserved "("
         form <-forms
         reserved ")"
-        reserved "{"
+        reserved "begin"
         stmt <- statement
-        reserved "}"
+        reserved "end"
         return $ ProcR name form [Ccom stmt]
 
 callProc :: Parser Com
 callProc =
-    do  name <- identifier
+    do  reserved "call"
+        name <- identifier
         reserved "("
         exps <- explist
         reserved ")"
@@ -203,14 +207,15 @@ decFunc =
         reserved "("
         form <-forms
         reserved ")"
-        reserved "{"
+        reserved "begin"
         exp <- aExpression
-        reserved "}"
+        reserved "end"
         return $ Func name form exp
 
 callFunc :: Parser Com
 callFunc =
-    do  name <- identifier
+    do  reserved "call"
+        name <- identifier
         reserved "("
         exps <- explist
         reserved ")"

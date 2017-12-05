@@ -67,6 +67,7 @@ isFalse (ValB False) = True
 isFalse _ = False
 
 ctr :: [Exp] -> [Contr]
+ctr [] = []
 ctr (a:exps) = (Cexp a):(ctr (exps))
 
 rev1 :: [a] -> [a]

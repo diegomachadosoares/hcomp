@@ -10,7 +10,6 @@ import Syntax
 import Commands
 import HelperTools
 import Parser
---import ESMC
 
 m :: V.Vector Str
 m = V.fromList [ValueI 5, ValueI 10, ValueI 100]
@@ -33,13 +32,11 @@ subExpr = (env,[],m,[Evar "constA", Evar "constB", Sub])
 mulExpr = (env,[],m,[Evar "varA", Evar "varB", Mul])
 compExpr = (env,[],m,[Evar "varA", Evar "varB", Add, Evar "constA", Evar "constB", Mul, Add])
 
--}
 -- | BooleanExpressions
 trueExpr = (env,[],m,[Cexp $ Not (EBool True)])
 falseExpr = (env,[],m,[Cexp $ Not (EBool False)])
 eqExpr = (env,[],m,[Cexp $ Not (Eq (Num 0) (Num 0))])
 
-{-
 -- | Commands
 
 nilCmd = (env,[],m,[Ccom Nill])
@@ -50,19 +47,32 @@ whileCmd = (env,[],m,[(Ccom (Var "varD" "int" [Num 10]))
                      [(Ccom (Attr "varD" [(Evar "varD"),(Num 1),Sub]))]))])
 -}
 -- | Factorial
-fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3))),
-    (Ccom (While (Not (Eq (Evar "varD") (Num 0)))
+fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3)))
+    , (Ccom (Attr "varA" (Num 1)))
+    ,(Ccom (While (Not (Eq (Evar "varD") (Num 0)))
     [(Ccom (Attr "varA" (Mul (Evar "varA") (Evar "varD"))))
-    ,(Ccom (Attr "varD" (Sub (Evar "varD") (Num 1))))]))],[])
+    ,(Ccom (Attr "varD" (Sub (Evar "varD") (Num 1))))]))]
+    ,[])
 
+{-proc =  (empty_Env
+        ,[]
+        ,empty_M
+        ,[(Ccom (ProcR "soma" (["a","b"]) [(Cexp (Add (Evar "a") (Evar "b")))]))
+        ,(Ccom (ProcA "soma" [(Num 1),(Num 2)]))]
+        ,[])
+-}
 -- | Parser
 parserIf = (env,[],m,[Ccom (parseString "if varA = 5 then varA := 10 else varA := 2")])
 parserWhile = (env,[],m,[Ccom (parseString "while (not (varA = 10)) do varA := varA + 1")])
 parser = (env,[],m,[Ccom (parseString "{ if 2 = 2 then varA := 1 else varA := 2 end; { varA := 15 ; varA := 7 } }")],[])
-pars = (empty_Env,[],empty_M,[Ccom (parseString " { proc soma ( a int , b int , ) { a := a + b } ; \
-                                                \ ")],[])
+pars =  (empty_Env
+        ,[]
+        ,empty_M
+        ,[Ccom (parseString " { var a int := 1 } ; { { proc soma ( a int , b int , ) begin a := a + b end } ; { { call soma ( a , 2 , ) } ; { print ( a ) } } } }")]
+        ,[])
 
 main = do
+    pPrint $ evalProg (pars)
     {-
     -- | Expressions Tests
     pPrint("Expressions")
@@ -132,4 +142,4 @@ main = do
     -- | Parser
     --pPrint $ evalCMD (parserIf)
     --pPrint $ evalCMD (parserWhile)
-    pPrint $ evalProg (pars)
+    --pPrint $ evalProg (pars)

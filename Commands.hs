@@ -33,6 +33,7 @@ evalCMD (e,s,m,(Ccom (Sequence a b)):c,o) = evalCMD (e,s,m,(Ccom a):(Ccom b):c,o
 evalCMD (e,s,m,(Ccom (Print exp)):c,o) = evalCMD (e,s,m,c,head(filterS (evalExp(e,s,m,[(Cexp exp)],o))):o)
 evalCMD (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[(Ccom (Exit a))],o)
 evalCMD (e,s,m,(Ccom(ProcA a b)):c,o) = evalCall (e,s,m,(Ccom(ProcA a b)):c,o)
+evalCMD (e,s,m,(Ccom(ProcR a f b)):c,o) = evalDec (e,s,m,(Ccom(ProcR a f b)):c,o)
 evalCMD (e,s,m,(Ccom(FunA a b)):c,o) = evalFun (e,s,m,(Ccom(FunA a b)):c,o)
 evalCMD (e,s,m,c,o) = (e,s,m,c,o)
 
@@ -75,7 +76,7 @@ evalCall (e,s,m,(Cexp a):c,o) = evalCall ( evalExp (e,s,m,(Cexp a):c,o) )
 evalCall (e,s,m,(CALL a):c,o) = (e,(snd (snd (add ((fst (rAbs (Map.findWithDefault (BndAbs ([],[])) a e))) ,([],s))))),m,(fst (snd (add ((fst (rAbs (Map.findWithDefault (BndAbs ([],[])) a e))) ,([],s)))))++(snd (rAbs (Map.findWithDefault (BndAbs ([],[])) a e)))++c,o)
 
 -- | Declara as variaveis formais e consome os valores
-add:: (F,([Contr],S)) -> (F,([Contr],S))
+add :: (F,([Contr],S)) -> (F,([Contr],S))
 add ([],(c,s)) = ([],(c,s))
 add (a:ids,(c,s)) = add (ids,((Ccom (Var a "int" (Num (fromIntegral(rIVal (head s)))))):c,tail s))
 
