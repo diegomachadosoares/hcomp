@@ -56,7 +56,7 @@ data Com =
   | Func String F Exp
   | FunA String A
   | Nill
-  | Exit Int
+  | Exit Integer
   deriving(Eq,Show)
 
 data Exp =
