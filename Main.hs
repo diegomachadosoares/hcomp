@@ -5,15 +5,14 @@ import qualified Data.Vector as V
 
 import Text.Pretty.Simple (pPrint)
 
-import Expressions
 import Syntax
 import Commands
 import HelperTools
 import Parser
---import ESMC
 
 m :: V.Vector Str
 m = V.fromList [ValueI 5, ValueI 10, ValueI 100]
+empty_M = V.fromList []
 
 env1 :: Map.Map String Bnd
 env1 = Map.insert "constA" (BndVal $ ValueI 1) Map.empty
@@ -21,116 +20,44 @@ env2 = Map.insert "constB" (BndVal $ ValueI 2) env1
 env3 = Map.insert "varA" (BndLoc (Loc 0)) env2
 env4 = Map.insert "varB" (BndLoc (Loc 1)) env3
 env = Map.insert "varC" (BndLoc (Loc 2)) env4
+empty_Env:: Map.Map String Bnd
+empty_Env = Map.empty
 
-{-
--- | Expressions
-varExpr = (env,[],m,[Evar "varA", Evar "constA",Eq,Not])
-sumExpr = (env,[],m,[Evar "constA", Evar "varA", Add])
-subExpr = (env,[],m,[Evar "constA", Evar "constB", Sub])
-mulExpr = (env,[],m,[Evar "varA", Evar "varB", Mul])
-compExpr = (env,[],m,[Evar "varA", Evar "varB", Add, Evar "constA", Evar "constB", Mul, Add])
-
--}
--- | BooleanExpressions
-trueExpr = (env,[],m,[Cexp $ Not (EBool True)])
-falseExpr = (env,[],m,[Cexp $ Not (EBool False)])
-eqExpr = (env,[],m,[Cexp $ Not (Eq (Num 0) (Num 0))])
-
-{-
--- | Commands
-
-nilCmd = (env,[],m,[Ccom Nill])
-ifCmd = (env,[],m,[Ccom (If [EBool True] [(Ccom (Attr "varA" [Num 100]))] [(Ccom (Attr "varA" [Num 1000]))])])
-ifNil = (env,[],m,[Ccom (If [EBool True] [Ccom Nill] [(Ccom (Attr "varA" [Num 1000]))])])
-whileCmd = (env,[],m,[(Ccom (Var "varD" "int" [Num 10]))
-                     ,(Ccom (While [(Evar "varD"),(Num 0),(Eq),Not]
-                     [(Ccom (Attr "varD" [(Evar "varD"),(Num 1),Sub]))]))])
--}
 -- | Factorial
-fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3))),
-    (Ccom (While (Not (Eq (Evar "varD") (Num 0)))
+fact = (env,[],m,[(Ccom (Var "varD" "int" (Num 3)))
+    , (Ccom (Attr "varA" (Num 1)))
+    ,(Ccom (While (Not (Eq (Evar "varD") (Num 0)))
     [(Ccom (Attr "varA" (Mul (Evar "varA") (Evar "varD"))))
-    ,(Ccom (Attr "varD" (Sub (Evar "varD") (Num 1))))]))])
+    ,(Ccom (Attr "varD" (Sub (Evar "varD") (Num 1))))]))]
+    ,[])
+
+proc =  (env
+        ,[]
+        ,m
+        ,[(Ccom (ProcR "soma" (["a","b"]) [(Ccom (Attr "a" (Add (Evar "a") (Evar "b"))))]))
+        ,(Ccom (ProcA "soma" [(Num 1),(Num 2)]))]
+        ,[])
+
+func =  (empty_Env
+        ,[]
+        ,empty_M
+        ,[(Ccom (Func "soma" (["a","b"]) (Add (Evar "a") (Evar "b"))))
+        ,(Cexp (FunA "soma" [(Num 1),(Num 2)]))]
+        ,[])
 
 -- | Parser
-parserIf = (env,[],m,[Ccom (parseString "if varA = 5 then varA := 10 else varA := 2")])
-parserWhile = (env,[],m,[Ccom (parseString "while (not (varA = 10)) do varA := varA + 1")])
-
-parser = (env,[],m,[Ccom (parseString  "{ var x int := 10 ; \
-                                       \{ if x = 10 then var x int := 1 else varB := 2 end;\
-                                       \{ varA := varA + 1 ; x := x + 1 } } }")])
-
-parserFact = (env,[],m,[Ccom (parseString "{ var max int := 4 ; \
-                                          \{ var acc int := 1 ; while not max = 0 do \
-                                          \{ acc := acc * max ; max := max - 1 } end } }")])
-
+parserProc =  (empty_Env
+        ,[]
+        ,empty_M
+        ,[Ccom (parseString " { proc soma ( a int , b int , ) begin a := a + b end } ; { call soma ( 1 , 2 , ) }")]
+        ,[])
+parserFunc =  (empty_Env
+        ,[]
+        ,empty_M
+        ,[Ccom (parseString " { var a int := 1 } ; { { func soma ( a int , b int , ) begin a + b end } ; { a := callf soma ( 1 , 2 , ) } }")]
+        ,[])
 main = do
-    {-
-    -- | Expressions Tests
-    pPrint("Expressions")
-    pPrint $ filterS $ evalExp varExpr
-    pPrint $ filterS $ evalExp sumExpr
-    pPrint $ filterS $ evalExp subExpr
-    pPrint $ filterS $ evalExp mulExpr
-    pPrint $ filterS $ evalExp compExpr
-    -}
-
-    {-
-    -- | Boolean Expressions Test
-    pPrint $ "Boolean Expressions"
-    pPrint $ evalExp trueExpr
-    pPrint $ evalExp falseExpr
-    pPrint (evalExp eqExpr)
-    pPrint (evalExp eqExpr1)
-    pPrint (evalExp eqExpr2)
-    pPrint (evalExp eqExpr3)
-    pPrint (evalExp orExpr)
-    pPrint (evalExp orExpr0)
-    pPrint (evalExp orExpr1)
-    pPrint (evalExp negExpr)
-    pPrint (evalExp negExpr1)
-    -}
-
-    {-
-    -- | Commands
-    pPrint ("Commands")
-    pPrint $ evalCMD nilCmd
-    pPrint (evalCMD attrCmd)
-    pPrint (evalCMD ifCmd)
-    pPrint (evalCMD whileCmd)
-    pPrint (evalCMD ifCmd1)
-    pPrint (evalCMD whileCmd)
-    -}
-
-    -- | Factorial
-    pPrint $ "--- Factorial ---"
-    pPrint $ evalCMD (parserFact)
-
-    {- | Generic Eval
-    pPrint ("Generic eval")
-    pPrint (eval varExpr)
-    pPrint (eval sumExpr)
-    pPrint (eval trueExpr)
-    pPrint (eval eqExpr1)
-    pPrint (eval negExpr)
-    pPrint (eval attrCmd)
-    pPrint (eval ifCmd)
-    pPrint (eval whileCmd)
-    -}
-
-   {- pPrint (eval dec)
-    pPrint ("---")
-    pPrint (eval decIF)
-    pPrint ("---")
-    pPrint (eval decIFVar)
-    pPrint ("---")
-    pPrint (eval decIFN)
-    pPrint ("---")
-    pPrint (eval decIFNVar)
-    -}
-
-    -- | Parser
-    pPrint $ "--- Declaration && Scope && Parsing ---"
-    --pPrint $ evalCMD (parserIf)
-    --pPrint $ evalCMD (parserWhile)
-    pPrint $ evalCMD (parser)
+    pPrint "$ ---- Evaluating Procedures ---- $"
+    pPrint $ evalProg (parserProc)
+    pPrint "$ ---- Evaluating Functions ---- $"
+    pPrint $ evalProg (parserFunc)

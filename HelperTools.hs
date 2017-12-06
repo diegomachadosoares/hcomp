@@ -2,14 +2,14 @@ module HelperTools where
 import Syntax
 
 
-filterE :: (a,b,c,d) -> (a)
-filterE (e,_,_,_) = (e)
+filterE :: (a,b,c,d,o) -> (a)
+filterE (e,_,_,_,_) = (e)
 
-filterS :: (a,b,c,d) -> (b)
-filterS (_,s,_,_) = (s)
+filterS :: (a,b,c,d,o) -> (b)
+filterS (_,s,_,_,_) = (s)
 
-filterM :: (a,b,c,d) -> (c)
-filterM (_,_,m,_) = (m)
+filterM :: (a,b,c,d,o) -> (c)
+filterM (_,_,m,_,_) = (m)
 
 convertLoc :: Loc -> Int
 convertLoc (Loc a) = a
@@ -46,6 +46,12 @@ getVal (Cexp (EBool a)) = ValB a
 rBnd :: Bnd -> Int
 rBnd (BndLoc (Loc a)) = a
 
+rAbs :: Bnd -> (F,[Contr])
+rAbs (BndAbs (a,b)) = (a,b)
+
+rAbsF :: Bnd -> (F,Exp)
+rAbsF (BndAbsF (a,b)) = (a,b)
+
 rIVal :: Value -> Int
 rIVal (ValI a) = a
 
@@ -59,3 +65,11 @@ isTrue _ = False
 isFalse :: Value -> Bool
 isFalse (ValB False) = True
 isFalse _ = False
+
+ctr :: [Exp] -> [Contr]
+ctr [] = []
+ctr (a:exps) = (Cexp a):(ctr (exps))
+
+rev1 :: [a] -> [a]
+rev1 [] = []
+rev1 (x:xs) = reverse xs ++ [x]
