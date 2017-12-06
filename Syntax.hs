@@ -54,7 +54,6 @@ data Com =
   | ProcR String F [Contr]
   | ProcA String A
   | Func String F Exp
-  | FunA String A
   | Nill
   | Exit Integer
   deriving(Eq,Show)
@@ -76,4 +75,5 @@ data Exp =
  | Evar String
  | IfExp Exp Exp Exp
  | Null
+ | FunA String A
   deriving (Eq,Ord,Show)

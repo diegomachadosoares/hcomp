@@ -9,37 +9,6 @@ import qualified Text.ParserCombinators.Parsec.Token as Token
 
 import Syntax
 
-{-
-data BExpr = BoolConst Bool
-           | Not BExpr
-           | BBinary BBinOp BExpr BExpr
-           | RBinary RBinOp AExpr AExpr
-            deriving (Show)
-
-data BBinOp = And | Or deriving (Show)
-
-data RBinOp = Greater | Less deriving (Show)
-
-data AExpr = Var String
-           | IntConst Integer
-           | Neg AExpr
-           | ABinary ABinOp AExpr AExpr
-             deriving (Show)
-
-data ABinOp = Add
-            | Subtract
-            | Multiply
-            | Divide
-              deriving (Show)
-
-data Stmt = Seq [Stmt]
-          | Assign String AExpr
-          | If BExpr Stmt Stmt
-          | While BExpr Stmt
-          | Skip
-            deriving (Show)
--}
-
 languageDef =
     emptyDef { Token.commentStart    = "/*"
         , Token.commentEnd      =   "*/"
@@ -67,7 +36,8 @@ languageDef =
                                     , "print"
                                     , "exit"
                                     , "func"
-                                    , "call"]
+                                    , "call"
+                                    , "callf"]
         , Token.reservedOpNames =   ["+", "-", "*", "/", ":="
                                     , "<", ">", "and", "or", "not","="
                                     ]
@@ -93,12 +63,7 @@ whileParser = whiteSpace >> statement'
 statement :: Parser Com
 statement =   parens statement
             <|> statement'
-{-
-sequenceOfStmt =
-    do  list <- (sepBy1 statement' semi)
-        -- If there's only one statement return it without using Seq.
-        return $ if length list == 1 then head list else Seq list
--}
+
 -- | TODO - Missing Declaration
 statement' :: Parser Com
 statement' =   seqStmt
@@ -113,7 +78,6 @@ statement' =   seqStmt
            <|> printStmt
            <|> callProc
            <|> decFunc
-           <|> callFunc
 
 ifStmt :: Parser Com
 ifStmt =
@@ -212,9 +176,9 @@ decFunc =
         reserved "end"
         return $ Func name form exp
 
-callFunc :: Parser Com
+callFunc :: Parser Exp
 callFunc =
-    do  reserved "call"
+    do  reserved "callf"
         name <- identifier
         reserved "("
         exps <- explist
@@ -271,11 +235,10 @@ expA = explist <|> expN
 
 
 aExpression :: Parser Exp
-aExpression = buildExpressionParser aOperators aTerm
-{-
+aExpression = bExpression <|> callFunc
+
 bExpression :: Parser Exp
-bExpression = buildExpressionParser bOperators bTerm
--}
+bExpression = buildExpressionParser aOperators aTerm
 
 aOperators = [ [Prefix (reservedOp "-"   >> return (NegInt  ))          ]
              , [Infix  (reservedOp "*"   >> return (Mul     )) AssocLeft
@@ -291,23 +254,6 @@ aOperators = [ [Prefix (reservedOp "-"   >> return (NegInt  ))          ]
 aTerm =  parens aExpression
      <|> liftM Evar identifier
      <|> liftM Num integer
-
-{-
-bTerm =  parens bExpression
-     <|> (reserved "true"  >> return (EBool True ))
-     <|> (reserved "false" >> return (EBool False))
-     <|> rExpression
-
-
-rExpression =
-  do a1 <- aExpression
-     op <- relation
-     a2 <- aExpression
-     return $ Cexp op a1 a2
-
-relation =   (reservedOp ">" >> return Gt)
-         <|> (reservedOp "<" >> return Lt)
--}
 
 parseString :: String -> Com
 parseString str =
