@@ -2,11 +2,10 @@
 module Syntax where
 
 import qualified Data.Map as Map
-import qualified Data.Vector as V
 
 type E = Map.Map String Bnd
 type S = [Value]
-type M = V.Vector Str
+type M = Map.Map Loc Str
 type C = [Contr]
 type Cexp = [Exp]
 type O = [Value]
@@ -15,7 +14,7 @@ type A = [Exp]
 
 -- | Memory Address of the variables
 data Loc = Loc Int
-    deriving (Show,Eq)
+    deriving (Show,Eq,Ord)
 
 -- | Variable and Constant Values
 data Str = ValueI Int | ValueB Bool

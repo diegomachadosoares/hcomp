@@ -1,6 +1,8 @@
 module HelperTools where
 import Syntax
 
+import qualified Data.Map as Map
+
 
 filterE :: (a,b,c,d,o) -> (a)
 filterE (e,_,_,_,_) = (e)
@@ -43,8 +45,8 @@ getVar (Cexp (Evar a)) = a
 getVal :: Contr -> Value
 getVal (Cexp (EBool a)) = ValB a
 
-rBnd :: Bnd -> Int
-rBnd (BndLoc (Loc a)) = a
+rBnd :: Bnd -> Loc
+rBnd (BndLoc (Loc a)) = Loc a
 
 rAbs :: Bnd -> (F,[Contr])
 rAbs (BndAbs (a,b)) = (a,b)
@@ -73,3 +75,7 @@ ctr (a:exps) = (Cexp a):(ctr (exps))
 rev1 :: [a] -> [a]
 rev1 [] = []
 rev1 (x:xs) = reverse xs ++ [x]
+
+pos :: Map.Map Loc Str -> Int
+pos (empty) = 0
+pos (map) = ((convertLoc(fst (Map.findMax (map))))+1)

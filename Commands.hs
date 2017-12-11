@@ -1,7 +1,6 @@
 module Commands where
 
 import qualified Data.Map as Map
-import qualified Data.Vector as V
 import Data.List
 import Data.Char
 
@@ -22,15 +21,15 @@ evalCMD (e,s,m,(Ccom (While exp a)):c,o)
     where x = rBVal (head (filterS (evalExp(e,s,m,[(Cexp exp)],o))))
 
 evalCMD (e,s,m,(Ccom (Attr a exp)):c,o)
-    | x == BndLoc (Loc (-1)) = (e,s,m,c,o)
-    | otherwise = evalCMD (e,s,(m V.// [(rBnd x, convValStr(head (filterS (evalExp (e,s,m,[(Cexp exp)],o)))))]),c,o)
-    where x = Map.findWithDefault (BndLoc $ Loc (-1)) a e
+    | x == (Loc (-1)) = (e,s,m,c,o)
+    | otherwise = evalCMD (e,s,(Map.insert (x) (convValStr(head (filterS (evalExp (e,s,m,[(Cexp exp)],o)))))  m),c,o)
+    where x = rBnd (Map.findWithDefault (BndLoc $ Loc (-1)) a e)
 
 evalCMD (e,s,m,(Ccom (Var a b exp)):c,o) = evalCMD (evalDec(e,s,m,(Ccom (Var a b exp)):c,o))
 evalCMD (e,s,m,(Ccom (Const a b exp)):c,o) = evalCMD (evalDec(e,s,m,(Ccom (Const a b exp)):c,o))
 evalCMD (e,s,m,(Ccom (Sequence a b)):c,o) = evalCMD (e,s,m,(Ccom a):(Ccom b):c,o)
 evalCMD (e,s,m,(Ccom (Print exp)):c,o) = evalCMD (e,s,m,c,head(filterS (evalExp(e,s,m,[(Cexp exp)],o))):o)
-evalCMD (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[(Ccom (Exit a))],o)
+evalCMD (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],Map.empty,[(Ccom (Exit a))],o)
 evalCMD (e,s,m,(Ccom (ProcA a b)):c,o) = evalCall (e,s,m,(Ccom(ProcA a b)):c,o)
 evalCMD (e,s,m,(Ccom (ProcR a f b)):c,o) = evalDec (e,s,m,(Ccom(ProcR a f b)):c,o)
 evalCMD (e,s,m,(Ccom (Func a f exp)):c,o) = evalDec (e,s,m,(Ccom(Func a f exp)):c,o)
@@ -53,20 +52,20 @@ evalExpIF (e,s,m,(Cexp (IfExp a b d)):c,o)
 -- | Declarações
 evalDec :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalDec (e,s,m,[],o) = (e,s,m,[],o)
-evalDec (e,s,m,(Ccom (Var a b d)):c,o) = (evalCMD (((Map.insert a (BndLoc (Loc ( V.length m)))) e),s,m V.++ (V.singleton (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o)))))),c,o))
+evalDec (e,s,m,(Ccom (Var a b d)):c,o) = free (evalCMD (((Map.insert a (BndLoc (Loc ( pos m)))) e),s,Map.insert (Loc (pos m)) (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o))))) m,c,o)) (pos m)
 evalDec (e,s,m,(Ccom (Const a b d)):c,o) = (Map.insert a (convValBnd(head (filterS (evalDecExp(e,s,m,[Cexp d],o))))) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (ProcR id f bl)):c,o) = (Map.insert id (BndAbs (f,(Ccom (ProcR id f bl)):bl)) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (Func id f exp)):c,o) = (Map.insert id (BndAbsF (f,exp)) e,s,m,c,o)
 evalDec (e,s,m,c,o) = (e,s,m,c,o)
 
 -- | Desalocação de memoria
-free :: (E, S, M, C, O) -> (E, S, M, C, O)
-free (e,s,m,c,o) = (e,s,V.init m,c,o)
+free :: (E, S, M, C, O) -> Int -> (E, S, M, C, O)
+free (e,s,m,c,o) i = (e,s,Map.delete (Loc i) m,c,o)
 
 -- | Eval Genérico
 evalProg :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalProg (e,s,m,[],o) = (e,s,m,[],o)
-evalProg (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],V.empty,[],(ValI (fromIntegral a)):o)
+evalProg (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],Map.empty,[],(ValI (fromIntegral a)):o)
 evalProg (e,s,m,c,o) = evalProg(evalCMD(e,s,m,c,o))
 
 -- | Chamada de procedimentos
@@ -87,7 +86,7 @@ mulOp x y = x * y
 evalVar :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalVar (e,s,m,c,o)
    | isStr x = (e, (convBnd (Map.findWithDefault (BndLoc $ Loc (-1)) (getVar(head c)) e)):s,m,tail c,o)
-   | isLoc x = (e, (convStr (m V.! rBnd (Map.findWithDefault (BndLoc $ Loc (-1)) (getVar $ head c) e))):s, m, tail c,o)
+   | isLoc x = (e, (convStr  ( Map.findWithDefault (ValueB False) (rBnd (Map.findWithDefault (BndLoc $ Loc (-1)) (getVar $ head c) e)) m)):s, m, tail c,o)
     where x = (Map.findWithDefault (BndLoc $ Loc (-1)) (getVar (head c)) e)
 
 
