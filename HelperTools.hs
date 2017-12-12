@@ -77,5 +77,7 @@ rev1 [] = []
 rev1 (x:xs) = reverse xs ++ [x]
 
 pos :: Map.Map Loc Str -> Int
-pos (empty) = 0
-pos (map) = ((convertLoc(fst (Map.findMax (map))))+1)
+pos (map)
+    |x == 0 = 0
+    |otherwise = ((convertLoc(fst (Map.findMax(map))))+1)
+    where x = Map.size map
