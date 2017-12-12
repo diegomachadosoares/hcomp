@@ -13,6 +13,9 @@ filterS (_,s,_,_,_) = (s)
 filterM :: (a,b,c,d,o) -> (c)
 filterM (_,_,m,_,_) = (m)
 
+filterO :: (a,b,c,d,o) -> (o)
+filterO (_,_,_,_,o) = (o)
+
 convertLoc :: Loc -> Int
 convertLoc (Loc a) = a
 

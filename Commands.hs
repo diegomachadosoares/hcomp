@@ -30,10 +30,10 @@ evalCMD (e,s,m,(Ccom (Const a b exp)):c,o) = evalCMD (evalDec(e,s,m,(Ccom (Const
 evalCMD (e,s,m,(Ccom (Sequence a b)):c,o) = evalCMD (e,s,m,(Ccom a):(Ccom b):c,o)
 evalCMD (e,s,m,(Ccom (Print exp)):c,o) = evalCMD (e,s,m,c,head(filterS (evalExp(e,s,m,[(Cexp exp)],o))):o)
 evalCMD (e,s,m,(Ccom (Exit a)):c,o) = (Map.empty,[],Map.empty,[(Ccom (Exit a))],o)
-evalCMD (e,s,m,(Ccom (ProcA a b)):c,o) = evalCall (e,s,m,(Ccom(ProcA a b)):c,o)
-evalCMD (e,s,m,(Ccom (ProcR a f b)):c,o) = evalDec (e,s,m,(Ccom(ProcR a f b)):c,o)
-evalCMD (e,s,m,(Ccom (Func a f exp)):c,o) = evalDec (e,s,m,(Ccom(Func a f exp)):c,o)
-evalCMD (e,s,m,(Cexp a):c,o) = evalExp (e,s,m,(Cexp a):c,o)
+evalCMD (e,s,m,(Ccom (ProcA a b)):c,o) = evalCMD (evalCall (e,s,m,(Ccom(ProcA a b)):c,o))
+evalCMD (e,s,m,(Ccom (ProcR a f b)):c,o) = evalCMD (evalDec (e,s,m,(Ccom(ProcR a f b)):c,o))
+evalCMD (e,s,m,(Ccom (Func a f exp)):c,o) = evalCMD (evalDec (e,s,m,(Ccom(Func a f exp)):c,o))
+evalCMD (e,s,m,(Cexp a):c,o) = evalCMD(evalExp (e,s,m,(Cexp a):c,o))
 evalCMD (e,s,m,c,o) = (e,s,m,c,o)
 
 -- | Expreções declarativas
@@ -52,15 +52,16 @@ evalExpIF (e,s,m,(Cexp (IfExp a b d)):c,o)
 -- | Declarações
 evalDec :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalDec (e,s,m,[],o) = (e,s,m,[],o)
-evalDec (e,s,m,(Ccom (Var a b d)):c,o) = (evalCMD (((Map.insert a (BndLoc (Loc ( pos m)))) e),s,Map.insert (Loc (pos m)) (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o))))) m,c,o))
+evalDec (e,s,m,(Ccom (Var a b d)):c,o) = let x = (pos m) in free (evalCMD(((Map.insert a (BndLoc (Loc (x)))) e),s,Map.insert (Loc (x)) (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o))))) m,c,o)) (a)
+--evalDec (e,s,m,(Ccom (Var a b d)):c,o) = let x = (pos m) in  (evalCMD(((Map.insert a (BndLoc (Loc (x)))) e),s,Map.insert (Loc (x)) (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o))))) m,c,o))
 evalDec (e,s,m,(Ccom (Const a b d)):c,o) = (Map.insert a (convValBnd(head (filterS (evalDecExp(e,s,m,[Cexp d],o))))) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (ProcR id f bl)):c,o) = (Map.insert id (BndAbs (f,(Ccom (ProcR id f bl)):bl)) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (Func id f exp)):c,o) = (Map.insert id (BndAbsF (f,exp)) e,s,m,c,o)
 evalDec (e,s,m,c,o) = (e,s,m,c,o)
 
 -- | Desalocação de memoria
-free :: (E, S, M, C, O) -> Int -> (E, S, M, C, O)
-free (e,s,m,c,o) i = (e,s,Map.delete (Loc i) m,c,o)
+free :: (E, S, M, C, O) -> String -> (E, S, M, C, O)
+free (e,s,m,c,o) a = (e,s,Map.delete (rBnd(Map.findWithDefault (BndLoc (Loc (-1))) a e)) m,c,o)
 
 -- | Eval Genérico
 evalProg :: (E, S, M, C, O) -> (E, S, M, C, O)

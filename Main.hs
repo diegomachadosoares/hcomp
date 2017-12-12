@@ -3,7 +3,7 @@ module Main where
 import qualified Data.Map as Map
 import qualified Data.Vector as V
 
-import Text.Pretty.Simple (pPrint)
+--import Text.Pretty.Simple (pPrint)
 
 import Syntax
 import Commands
@@ -52,6 +52,7 @@ parserProc =  (empty_Env
         ,[]
         ,empty_M
         ,[Ccom (parseString " { proc soma ( a int , b int , ) begin { a := a + b } ; { print ( a ) } end } ; { call soma ( 1 , 2 , ) }")]
+
         ,[])
 parserFunc =  (empty_Env
         ,[]
@@ -59,8 +60,31 @@ parserFunc =  (empty_Env
         ,[Ccom (parseString " { var a int := 1 } ; { { { func soma ( a int , b int , ) begin a + b end } ; { a := callf soma ( 1 , 2 , ) } } ; { print ( a ) } }")]
         -- PRINT ,[Ccom (parseString " { var a int := 1 } ; { print ( a ) }")]
         ,[])
+
+parserExit =  (empty_Env
+        ,[]
+        ,empty_M
+        ,[Ccom (parseString " { proc soma ( a int , b int , ) begin { a := a + b } ; { { exit 0 } ; { print ( a )} } end } ; { call soma ( 1 , 2 , ) }")]
+
+        ,[])
+
+parserFat =  (empty_Env
+        ,[]
+        ,empty_M
+        ,[Ccom (parseString " { proc fat ( acc int , resp int , ) begin if ( acc = 0)  then  print ( resp ) else { resp := resp * acc }  ; { { acc := acc - 1 } ; { call fat ( acc , resp , ) } } endIF end } ; { call fat ( 3 , 1 , ) } ")]
+
+        ,[])
+
+
+
 main = do
-    pPrint "$ ---- Evaluating Procedures ---- $"
-    pPrint $ evalProg (parserProc)
-    --pPrint "$ ---- Evaluating Functions ---- $"
-    --pPrint $ evalProg (parserFunc)
+    print "$ ---- Evaluating Procedures ---- $"
+    print $  filterS (evalProg (parserProc))
+    print $ filterM (evalProg (parserProc))
+    print $ filterO (evalProg (parserProc))
+    print "$ ---- Evaluating Functions ---- $"
+    print $ evalProg (parserFunc)
+    print "$ ---- Evaluating Exit ---- $"
+    print $ evalProg (parserExit)
+    --print "$ ---- Evaluating Recursive Procedures ---- $"
+    --print $ filterM (evalProg (parserFat))
