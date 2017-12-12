@@ -12,7 +12,9 @@ import Parser
 
 m :: V.Vector Str
 m = V.fromList [ValueI 5, ValueI 10, ValueI 100]
-empty_M = V.fromList []
+--empty_M = V.fromList []
+empty_M :: Map.Map Loc Str
+empty_M = Map.empty
 
 env1 :: Map.Map String Bnd
 env1 = Map.insert "constA" (BndVal $ ValueI 1) Map.empty
@@ -49,15 +51,16 @@ func =  (empty_Env
 parserProc =  (empty_Env
         ,[]
         ,empty_M
-        ,[Ccom (parseString " { proc soma ( a int , b int , ) begin a := a + b end } ; { call soma ( 1 , 2 , ) }")]
+        ,[Ccom (parseString " { proc soma ( a int , b int , ) begin { a := a + b } ; { print ( a ) } end } ; { call soma ( 1 , 2 , ) }")]
         ,[])
 parserFunc =  (empty_Env
         ,[]
         ,empty_M
-        ,[Ccom (parseString " { var a int := 1 } ; { { func soma ( a int , b int , ) begin a + b end } ; { a := callf soma ( 1 , 2 , ) } }")]
+        ,[Ccom (parseString " { var a int := 1 } ; { { { func soma ( a int , b int , ) begin a + b end } ; { a := callf soma ( 1 , 2 , ) } } ; { print ( a ) } }")]
+        -- PRINT ,[Ccom (parseString " { var a int := 1 } ; { print ( a ) }")]
         ,[])
 main = do
     pPrint "$ ---- Evaluating Procedures ---- $"
     pPrint $ evalProg (parserProc)
-    pPrint "$ ---- Evaluating Functions ---- $"
-    pPrint $ evalProg (parserFunc)
+    --pPrint "$ ---- Evaluating Functions ---- $"
+    --pPrint $ evalProg (parserFunc)
