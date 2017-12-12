@@ -52,7 +52,7 @@ evalExpIF (e,s,m,(Cexp (IfExp a b d)):c,o)
 -- | Declarações
 evalDec :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalDec (e,s,m,[],o) = (e,s,m,[],o)
-evalDec (e,s,m,(Ccom (Var a b d)):c,o) = free (evalCMD (((Map.insert a (BndLoc (Loc ( pos m)))) e),s,Map.insert (Loc (pos m)) (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o))))) m,c,o)) (pos m)
+evalDec (e,s,m,(Ccom (Var a b d)):c,o) = (evalCMD (((Map.insert a (BndLoc (Loc ( pos m)))) e),s,Map.insert (Loc (pos m)) (convValStr(head(filterS (evalDecExp(e,s,m,[Cexp d],o))))) m,c,o))
 evalDec (e,s,m,(Ccom (Const a b d)):c,o) = (Map.insert a (convValBnd(head (filterS (evalDecExp(e,s,m,[Cexp d],o))))) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (ProcR id f bl)):c,o) = (Map.insert id (BndAbs (f,(Ccom (ProcR id f bl)):bl)) e,s,m,c,o)
 evalDec (e,s,m,(Ccom (Func id f exp)):c,o) = (Map.insert id (BndAbsF (f,exp)) e,s,m,c,o)
@@ -86,7 +86,7 @@ mulOp x y = x * y
 evalVar :: (E, S, M, C, O) -> (E, S, M, C, O)
 evalVar (e,s,m,c,o)
    | isStr x = (e, (convBnd (Map.findWithDefault (BndLoc $ Loc (-1)) (getVar(head c)) e)):s,m,tail c,o)
-   | isLoc x = (e, (convStr  ( Map.findWithDefault (ValueB False) (rBnd (Map.findWithDefault (BndLoc $ Loc (-1)) (getVar $ head c) e)) m)):s, m, tail c,o)
+   | isLoc x = (e, (convStr  ( Map.findWithDefault (ValueI 0) (rBnd (Map.findWithDefault (BndLoc $ Loc (-1)) (getVar $ head c) e)) m)):s, m, tail c,o)
     where x = (Map.findWithDefault (BndLoc $ Loc (-1)) (getVar (head c)) e)
 
 
